@@ -1,11 +1,13 @@
-from PyQt4 import QtCore, QtGui
-from SetPostureHumanoidUI import Ui_Form
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import (QMainWindow, QTextEdit,
+    QAction, QFileDialog, QApplication)
+from SetPostureHumanoidUI_QT5 import Ui_Form
 import time
 import serial
 import sys
 import serial.tools.list_ports
 
-class HumanoidMainWindow(QtGui.QMainWindow,Ui_Form):
+class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
     int_id_L =[1,2,3,4,5,6]
     int_id_R =[11,12,13,14,15,16]
     int_id_LArm =[21,22,23,24]
@@ -24,6 +26,7 @@ class HumanoidMainWindow(QtGui.QMainWindow,Ui_Form):
         self.InitUI()
         self.SetButtonAndSpinCtrlDisable()
 
+
     def InitVariable(self):
         self.int_stepTime = 0.03
         self.str_keyframeSelected ='Keyframe1'
@@ -40,7 +43,7 @@ class HumanoidMainWindow(QtGui.QMainWindow,Ui_Form):
         self.int_motorCenterValue = file_center.read()
         file_center.close()
         self.int_motorCenterValue = self.int_motorCenterValue.split('\n')
-        print  self.int_motorCenterValue
+        print (self.int_motorCenterValue)
         #cast motorCenterValue from str to int#
         for x in range (self.int_motor_Amount):
             self.int_motorCenterValue[x] = int(self.int_motorCenterValue[x])
