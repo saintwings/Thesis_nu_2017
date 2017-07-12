@@ -30,7 +30,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
     def InitVariable(self):
         self.int_stepTime = 0.03
         self.str_keyframeSelected ='Keyframe1'
-        self.int_keyframeSelected = 0
+        self.int_keyframeSelected = 1
         self.bool_comportConnected = False
         self.int_numberOfKeyframe = 0
         self.str_fileName = 'Unknown'
@@ -49,10 +49,10 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             self.int_motorCenterValue[x] = int(self.int_motorCenterValue[x])
         file_type = open('motor_type.txt', 'r')
         self.str_motorType = file_type.read()
-        print self.str_motorType
+        print(self.str_motorType)
         file_type.close()
         self.str_motorType = self.str_motorType.split('\n')
-        print self.str_motorType
+        print(self.str_motorType)
         #print self.int_motorCenterValue
         #print len(self.int_motorCenterValue)
         ##self.int_motorValue[keyframe0-14][motorID0-17]##
@@ -85,58 +85,65 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
         self.ui.connectionStatus_label.setText("Status : Disconnect")
 
-        QtCore.QObject.connect(self.ui.activeKeyframe_checkBox,QtCore.SIGNAL("clicked()"), self.ActiveKeyframe_CheckBox)
+        self.ui.activeKeyframe_checkBox.clicked.connect(self.ActiveKeyframe_CheckBox)
+        self.ui.keyFrame_comboBox.activated[str].connect(self.OnSelect_ComboboxKeyframe)
+        self.ui.posture_comboBox.activated[str].connect(self.OnSelect_ComboboxPosture)
+        self.ui.comport_comboBox.activated[str].connect(self.OnSelect_ComboboxComport)
+        self.ui.baudrate_comboBox.activated[str].connect(self.OnSelect_ComboboxBaudrate)
 
-        QtCore.QObject.connect(self.ui.keyFrame_comboBox,QtCore.SIGNAL('activated(QString)'),self.OnSelect_ComboboxKeyframe)
-        QtCore.QObject.connect(self.ui.posture_comboBox,QtCore.SIGNAL('activated(QString)'),self.OnSelect_ComboboxPosture)
-        QtCore.QObject.connect(self.ui.comport_comboBox,QtCore.SIGNAL('activated(QString)'),self.OnSelect_ComboboxComport)
-        QtCore.QObject.connect(self.ui.baudrate_comboBox,QtCore.SIGNAL('activated(QString)'),self.OnSelect_ComboboxBaudrate)
+        self.ui.comport_comboBox.currentIndexChanged[str].connect(self.OnIndexChange_ComboboxComport)
 
-        QtCore.QObject.connect(self.ui.comport_comboBox,QtCore.SIGNAL('currentIndexChanged(QString)'),self.OnIndexChange_ComboboxComport)
+        self.ui.connect_Button.clicked.connect(self.OnButton_connect)
+        self.ui.loadPosture_pushButton.clicked.connect(self.OnButton_Load)
+        self.ui.savePosture_pushButton.clicked.connect(self.OnButton_Save)
+        self.ui.setReady_Button.clicked.connect(self.OnButton_ready)
+        self.ui.playAll_Button.clicked.connect(self.OnButton_playAll)
+        self.ui.setTime_pushButton.clicked.connect(self.OnButton_time)
+        self.ui.play_pushButton.clicked.connect(self.OnButton_play)
 
-        QtCore.QObject.connect(self.ui.connect_Button,QtCore.SIGNAL("clicked()"), self.OnButton_connect)
-        QtCore.QObject.connect(self.ui.loadPosture_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_Load)
-        QtCore.QObject.connect(self.ui.savePosture_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_Save)
-        QtCore.QObject.connect(self.ui.setReady_Button,QtCore.SIGNAL("clicked()"), self.OnButton_ready)
-        QtCore.QObject.connect(self.ui.playAll_Button,QtCore.SIGNAL("clicked()"), self.OnButton_playAll)
-        QtCore.QObject.connect(self.ui.setTime_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_time)
-        QtCore.QObject.connect(self.ui.play_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_play)
+        self.ui.setAll_pushButton.clicked.connect(self.OnButton_setAll)
+        self.ui.setLAll_pushButton.clicked.connect(self.OnButton_setLAll)
+        self.ui.setRAll_pushButton.clicked.connect(self.OnButton_setRAll)
+        self.ui.setLArmAll_pushButton.clicked.connect(self.OnButton_setLArmAll)
+        self.ui.setRArmAll_pushButton.clicked.connect(self.OnButton_setRArmAll)
+        self.ui.setHAll_pushButton.clicked.connect(self.OnButton_setHAll)
 
-        QtCore.QObject.connect(self.ui.setAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_setAll)
-        QtCore.QObject.connect(self.ui.setLAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_setLAll)
-        QtCore.QObject.connect(self.ui.setRAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_setRAll)
-        QtCore.QObject.connect(self.ui.setLArmAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_setLArmAll)
-        QtCore.QObject.connect(self.ui.setRArmAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_setRArmAll)
-        QtCore.QObject.connect(self.ui.setHAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_setHAll)
+        for id in self.int_id_All:
+            eval("self.ui.motor{}Set_pushButton".format(id)).clicked.connect(lambda ignore, id=id: self.OnButton_Set(id))
 
-        for i in self.int_id_All:
-            QtCore.QObject.connect(getattr(self.ui,'motor'+str(i)+'Set_pushButton'),QtCore.SIGNAL("clicked()"), getattr(self,'OnButton_id'+str(i)+'Set'))
+            #QtCore.QObject.connect(getattr(self.ui,'motor'+str(i)+'Set_pushButton'),QtCore.SIGNAL("clicked()"), getattr(self,'OnButton_id'+str(i)+'Set'))
         ###### QtCore.QObject.connect(self.ui.motor1Set_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_id1Set)
 
 
-        QtCore.QObject.connect(self.ui.getAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_getAll)
-        QtCore.QObject.connect(self.ui.getLAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_getLAll)
-        QtCore.QObject.connect(self.ui.getRAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_getRAll)
-        QtCore.QObject.connect(self.ui.getLArmAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_getLArmAll)
-        QtCore.QObject.connect(self.ui.getRArmAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_getRArmAll)
-        QtCore.QObject.connect(self.ui.getHAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_getHAll)
+        self.ui.getAll_pushButton.clicked.connect(self.OnButton_getAll)
+        self.ui.getLAll_pushButton.clicked.connect(self.OnButton_getLAll)
+        self.ui.getRAll_pushButton.clicked.connect(self.OnButton_getRAll)
+        self.ui.getLArmAll_pushButton.clicked.connect(self.OnButton_getLArmAll)
+        self.ui.getRArmAll_pushButton.clicked.connect(self.OnButton_getRArmAll)
+        self.ui.getHAll_pushButton.clicked.connect(self.OnButton_getHAll)
 
-        for i in self.int_id_All:
-            QtCore.QObject.connect(getattr(self.ui,'motor'+str(i)+'Get_pushButton'),QtCore.SIGNAL("clicked()"), getattr(self,'OnButton_id'+str(i)+'Get'))
+        for id in self.int_id_All:
+            eval("self.ui.motor{}Get_pushButton".format(id)).clicked.connect(
+                lambda ignore, id=id: self.OnButton_Get(id))
+
+            #QtCore.QObject.connect(getattr(self.ui,'motor'+str(i)+'Get_pushButton'),QtCore.SIGNAL("clicked()"), getattr(self,'OnButton_id'+str(i)+'Get'))
 
 
-        QtCore.QObject.connect(self.ui.disTAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_DisableTorqueAll)
-        QtCore.QObject.connect(self.ui.disTLAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_DisableTorqueLAll)
-        QtCore.QObject.connect(self.ui.disTRAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_DisableTorqueRAll)
-        QtCore.QObject.connect(self.ui.disTLArmAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_DisableTorqueLArmAll)
-        QtCore.QObject.connect(self.ui.disTRArmAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_DisableTorqueRArmAll)
-        QtCore.QObject.connect(self.ui.disTHAll_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_DisableTorqueHAll)
+        self.ui.disTAll_pushButton.clicked.connect(self.OnButton_DisableTorqueAll)
+        self.ui.disTLAll_pushButton.clicked.connect(self.OnButton_DisableTorqueLAll)
+        self.ui.disTRAll_pushButton.clicked.connect(self.OnButton_DisableTorqueRAll)
+        self.ui.disTLArmAll_pushButton.clicked.connect(self.OnButton_DisableTorqueLArmAll)
+        self.ui.disTRArmAll_pushButton.clicked.connect(self.OnButton_DisableTorqueRArmAll)
+        self.ui.disTHAll_pushButton.clicked.connect(self.OnButton_DisableTorqueHAll)
 
         ######QtCore.QObject.connect(self.ui.motor1DisT_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_id1DisableTorque)
-        for i in self.int_id_All:
-            QtCore.QObject.connect(getattr(self.ui,'motor'+str(i)+'DisT_pushButton'),QtCore.SIGNAL("clicked()"), getattr(self,'OnButton_id'+str(i)+'DisableTorque'))
+        for id in self.int_id_All:
+            eval("self.ui.motor{}DisT_pushButton".format(id)).clicked.connect(
+                lambda ignore, id=id: self.OnButton_DisableTorque(id))
 
-        QtCore.QObject.connect(self.ui.saveCenter_pushButton,QtCore.SIGNAL("clicked()"), self.OnButton_SaveCenter)
+            #QtCore.QObject.connect(getattr(self.ui,'motor'+str(i)+'DisT_pushButton'),QtCore.SIGNAL("clicked()"), getattr(self,'OnButton_id'+str(i)+'DisableTorque'))
+
+        self.ui.saveCenter_pushButton.clicked.connect(self.OnButton_SaveCenter)
 
         self.Search_Comport()
 
@@ -147,7 +154,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
     def OnIndexChange_ComboboxComport(self,text):
         self.str_comport = str(text)
-        print self.str_fileName
+        print(self.str_fileName)
 
     def OnButton_Delete(self):
         #self.ui.keyFrame_comboBox.
@@ -158,96 +165,101 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
     def OnButton_DisableTorqueAll(self):
         for i in self.int_id_All:
             self.setDisableMotorTorque(i)
+            time.sleep(0.015)
 
     def OnButton_DisableTorqueLAll(self):
         for i in self.int_id_L:
             self.setDisableMotorTorque(i)
+            time.sleep(0.015)
 
     def OnButton_DisableTorqueRAll(self):
         for i in self.int_id_R:
             self.setDisableMotorTorque(i)
+            time.sleep(0.015)
 
     def OnButton_DisableTorqueLArmAll(self):
         for i in self.int_id_LArm:
             self.setDisableMotorTorque(i)
+            time.sleep(0.015)
 
     def OnButton_DisableTorqueRArmAll(self):
         for i in self.int_id_RArm:
             self.setDisableMotorTorque(i)
+            time.sleep(0.015)
 
     def OnButton_DisableTorqueHAll(self):
         for i in self.int_id_H:
             self.setDisableMotorTorque(i)
+        time.sleep(0.015)
 
+    def OnButton_DisableTorque(self, id):
+        print("DisableTorque ID " + str(id))
+        self.setDisableMotorTorque(id)
 
-    #def OnButton_id1DisableTorque(self):
-    #    self.setDisableMotorTorque(1)
-    fntemplateDis = """def OnButton_id%dDisableTorque(self):\n
-                \tself.setDisableMotorTorque(%d)"""
-    for i in int_id_All: exec fntemplateDis % (i, i)
-
-    # def OnButton_id1Get(self):
-    #     self.ui.motor1Value_spinBox.setValue(self.getMotorPosition(1))
-
-    fntemplateGet = """def OnButton_id%dGet(self):\n
-                \tself.ui.motor%dValue_spinBox.setValue(self.getMotorPosition(%d))"""
-    for i in int_id_All: exec fntemplateGet % (i, i, i)
+    def OnButton_Get(self, id):
+        print("get ID = " + str(id))
+        eval("self.ui.motor{}Value_spinBox.setValue(self.getMotorPosition(id))".format(id))
 
     def OnButton_getAll(self):
-        for i in self.int_id_All:
-            getattr(self.ui,"motor"+str(i)+"Value_spinBox").setValue(self.getMotorPosition(i))
-            #self.ui.motor1Value_spinBox.setValue(self.getMotorPosition(i))
+        print("getAll")
+        for id in self.int_id_All:
+            eval("self.ui.motor{}Value_spinBox.setValue(self.getMotorPosition(id))".format(id))
+            time.sleep(0.015)
 
     def OnButton_getLAll(self):
-        for i in self.int_id_L:
-            getattr(self.ui,"motor"+str(i)+"Value_spinBox").setValue(self.getMotorPosition(i))
+        print("get_L_All")
+        for id in self.int_id_L:
+            eval("self.ui.motor{}Value_spinBox.setValue(self.getMotorPosition(id))".format(id))
+            time.sleep(0.015)
 
     def OnButton_getRAll(self):
-        for i in self.int_id_R:
-            getattr(self.ui,"motor"+str(i)+"Value_spinBox").setValue(self.getMotorPosition(i))
+        print("get_R_All")
+        for id in self.int_id_R:
+            eval("self.ui.motor{}Value_spinBox.setValue(self.getMotorPosition(id))".format(id))
+            time.sleep(0.015)
 
     def OnButton_getLArmAll(self):
-        for i in self.int_id_LArm:
-            getattr(self.ui,"motor"+str(i)+"Value_spinBox").setValue(self.getMotorPosition(i))
+        print("get_L_Arm_All")
+        for id in self.int_id_LArm:
+            eval("self.ui.motor{}Value_spinBox.setValue(self.getMotorPosition(id))".format(id))
+            time.sleep(0.015)
 
     def OnButton_getRArmAll(self):
-        for i in self.int_id_RArm:
-            getattr(self.ui,"motor"+str(i)+"Value_spinBox").setValue(self.getMotorPosition(i))
+        print("get_R_Arm_All")
+        for id in self.int_id_RArm:
+            eval("self.ui.motor{}Value_spinBox.setValue(self.getMotorPosition(id))".format(id))
+            time.sleep(0.015)
 
     def OnButton_getHAll(self):
-        for i in self.int_id_H:
-            getattr(self.ui,"motor"+str(i)+"Value_spinBox").setValue(self.getMotorPosition(i))
+        print("get_H_All")
+        for id in self.int_id_H:
+            eval("self.ui.motor{}Value_spinBox.setValue(self.getMotorPosition(id))".format(id))
+            time.sleep(0.015)
 
-    # def OnButton_id1Set(self):
-    #     #self.int_time[self.GetOrderKeyframe() - 1] = self.spinctrl_time.GetValue()
-    #     self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
-    #     self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']], 1023, 1023)
-    #     self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']]
-    #     print self.ui.motor1Value_spinBox.value()
-    fntemplateSet = """def OnButton_id%dSet(self):\n
-                \tself.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(%d)]] = self.ui.motor%dValue_spinBox.value()\n
-                \tself.setDeviceMoving( self.str_comport, self.str_baudrate, %d, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(%d)]], 1023, 1023)\n
-                \tself.int_old_motorValue[self.dic_motorIndexID['id'+str(%d)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(%d)]]\n
-                \tprint self.ui.motor%dValue_spinBox.value()"""
+    def OnButton_Set(self, id):
+        print("set id=",id)
+        self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id' + str(id)]] = eval("self.ui.motor{}Value_spinBox.value()".format(id))
+        self.setDeviceMoving( self.str_comport, self.str_baudrate, id, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id' + str(id)]], 1023, 1023)
+        self.int_old_motorValue[self.dic_motorIndexID['id' + str(id)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id' + str(id)]]
 
-    for i in int_id_All: exec fntemplateSet % (i, i, i, i, i, i, i, i)
 
     def OnButton_play(self):
+        print("play...")
 
         self.SetButtonAndSpinCtrlDisable()
 
-        #self.int_time[self.GetOrderKeyframe() - 1] = self.spinctrl_time.GetValue()
-        #self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
-        for i in self.int_id_All:
-            self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
+
+        for id in self.int_id_All:
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))] = eval(
+                "self.ui.motor{}Value_spinBox.value()".format(id))
 
         time_start = time.time()
         time_finish = time_start + float(self.int_time[self.GetOrderKeyframe() - 1])/10
         in_time = True
 
-        print time_start
-        print time_finish
-        print 'Wait....'
+        print(time_start)
+        print(time_finish)
+        print('Wait....')
         while in_time:
             time_current = time.time()
             if time_current >= time_finish:
@@ -256,9 +268,9 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                     self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
                     #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']], 1023, 1023)
 
-                for i in self.int_id_All:
-                    self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-                    #self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']]
+                for id in self.int_id_All:
+                    self.int_old_motorValue[eval("self.dic_motorIndexID['id{}']".format(id))] = \
+                    self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))]
 
                 in_time = False
 
@@ -269,118 +281,78 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
             time.sleep(self.int_stepTime)
 
-        print 'Finished'
+        print('Finished')
         self.SetButtonAndSpinCtrlEnable()
 
     def OnButton_setLAll(self):
-
-        #self.int_time[self.GetOrderKeyframe() - 1] = self.spinctrl_time.GetValue()
+        print("set L all")
         for i in self.int_id_L:
             self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            #self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
-
-        for i in self.int_id_L:
             self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']], 1023, 1023)
-
-        for i in self.int_id_L:
             self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-            #self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']]
 
     def OnButton_setRAll(self):
-
-        #self.int_time[self.GetOrderKeyframe() - 1] = self.spinctrl_time.GetValue()
+        print("set R all")
         for i in self.int_id_R:
             self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            #self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
-
-        for i in self.int_id_R:
             self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']], 1023, 1023)
-
-        for i in self.int_id_R:
             self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-            #self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']]
 
     def OnButton_setLArmAll(self):
+        print("set L arm all")
         for i in self.int_id_LArm:
             self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            #self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
-
-        for i in self.int_id_LArm:
             self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']], 1023, 1023)
-
-        for i in self.int_id_LArm:
             self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-            #self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']]
 
     def OnButton_setRArmAll(self):
+        print("set R arm all")
         for i in self.int_id_RArm:
             self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            #self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
-
-        for i in self.int_id_RArm:
             self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']], 1023, 1023)
-
-        for i in self.int_id_RArm:
             self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-            #self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']]
 
     def OnButton_setHAll(self):
-
+        print("set H all")
         for i in self.int_id_H:
             self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            #self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
-
-        for i in self.int_id_H:
             self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']], 1023, 1023)
-
-        for i in self.int_id_H:
             self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-            #self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']]
 
     def OnButton_setAll(self):
-
+        print("set all")
         #self.int_time[self.GetOrderKeyframe() - 1] = self.spinctrl_time.GetValue()
         for i in self.int_id_All:
             self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            #self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
-
-        for i in self.int_id_All:
             self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']], 1023, 1023)
-
-        for i in self.int_id_All:
             self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-            #self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id1']]
 
     def OnButton_time(self):
         self.int_time[self.GetOrderKeyframe() - 1] = self.ui.keyframeTime_spinBox.value()
-        print self.int_time[self.GetOrderKeyframe() - 1]
+        print(self.int_time[self.GetOrderKeyframe() - 1])
 
     def OnButton_ready(self):
+        print("ready...")
+
+        self.SetButtonAndSpinCtrlDisable()
+
         if self.int_numberOfKeyframe == 0:
-            print 'Error!! Number of keyframe = 0 '
+            print('Error!! Number of keyframe = 0 ')
         else:
             time_start = time.time()
             time_finish = time_start + float(self.int_time[0])/10
             in_time = True
 
-            print time_start
-            print time_finish
-            print 'Wait....'
+            print(time_start)
+            print(time_finish)
+            print('Wait....')
             while in_time:
                 time_current = time.time()
                 if time_current >= time_finish:
                     for i in self.int_id_All:
                         self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[0][self.dic_motorIndexID['id'+str(i)]], 200, 200)
-                        #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[0][self.dic_motorIndexID['id1']], 200, 200)
-                    for i in self.int_id_All:
-                        self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[0][self.dic_motorIndexID['id'+str(i)]]
-                        #self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[0][self.dic_motorIndexID['id1']]
+                        self.int_old_motorValue[eval("self.dic_motorIndexID['id{}']".format(i))] = \
+                        self.int_motorValue[0][eval("self.dic_motorIndexID['id{}']".format(i))]
 
                     in_time = False
 
@@ -390,12 +362,15 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                         #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.InterpolateMotorValue(self.int_motorValue[0][self.dic_motorIndexID['id1']],self.int_old_motorValue[self.dic_motorIndexID['id1']],time_finish,time_start,time_current), 200, 200)
 
                 time.sleep(0.015)
-            print 'Finished'
+            print('Finished')
+        self.SetButtonAndSpinCtrlEnable()
 
     def OnButton_playAll(self):
+        print("play all")
+        self.SetButtonAndSpinCtrlDisable()
 
         if self.int_numberOfKeyframe == 0:
-            print 'Error!! Number of keyframe = 0 '
+            print('Error!! Number of keyframe = 0 ')
         else:
             self.SetButtonAndSpinCtrlDisable()
             for x in range(self.int_numberOfKeyframe):
@@ -403,21 +378,18 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                 time_finish = time_start + float(self.int_time[x])/10
                 in_time = True
 
-                print time_start
-                print time_finish
-                print 'keyframe = '+ str(x+1)
-                print 'Time = '+ str(self.int_time[x])
-                print 'Wait....'
+                print(time_start)
+                print(time_finish)
+                print('keyframe = ' + str(x + 1))
+                print('Time = ' + str(self.int_time[x]))
+                print('Wait....')
                 while in_time:
                     time_current = time.time()
                     if time_current >= time_finish:
                         for i in self.int_id_All:
                             self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[x][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-                            #self.setDeviceMoving( self.str_comport, self.str_baudrate, 1, "Ex", self.int_motorValue[x][self.dic_motorIndexID['id1']], 1023, 1023)
-
-                        for i in self.int_id_All:
-                            self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[x][self.dic_motorIndexID['id'+str(i)]]
-                            #self.int_old_motorValue[self.dic_motorIndexID['id1']] = self.int_motorValue[x][self.dic_motorIndexID['id1']]
+                            self.int_old_motorValue[eval("self.dic_motorIndexID['id{}']".format(i))] = \
+                            self.int_motorValue[x][eval("self.dic_motorIndexID['id{}']".format(i))]
 
                         in_time = False
 
@@ -428,17 +400,17 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
                     time.sleep(self.int_stepTime)
 
-                print 'Finished'
+                print('Finished')
             self.SetButtonAndSpinCtrlEnable()
 
     def OnButton_Load(self):
-        print "Load"
-        print self.str_fileName
+        print("Load")
+        print(self.str_fileName)
 
         self.ui.fileName_label.setText(self.str_fileName)
 
         namePosture = self.str_fileName + '.txt'
-        print namePosture
+        print(namePosture)
 
         file_posture = open(namePosture, 'r')
         str_load_data = file_posture.read()
@@ -472,13 +444,13 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.SetValueKeyframeToShow()
 
     def OnButton_Save(self):
-        print "Save"
-        print self.str_fileName
+        print("Save")
+        print(self.str_fileName)
 
         self.ui.fileName_label.setText(self.str_fileName)
 
         namePosture = self.str_fileName + '.txt'
-        print namePosture
+        print(namePosture)
         file_posture = open(namePosture, 'w')
         file_posture.write(str(self.int_numberOfKeyframe)+'\n')
         for x in range (self.int_numberOfKeyframe):
@@ -512,7 +484,9 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
     def SetMotorCenterLabel(self):
         for i in self.int_id_All:
-            getattr(self.ui,'motor'+str(i)+'center_label').setText(str(self.int_motorCenterValue[self.dic_motorIndexID['id'+str(i)]]))
+            eval(
+                "self.ui.motor{}center_label.setText(str(self.int_motorCenterValue[self.dic_motorIndexID['id'+str(i)]]))".format(
+                    i))
 
     def OnButton_SaveCenter(self):
         file_center = open('motor_center.txt', 'w')
@@ -529,10 +503,10 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
     def OnSelect_ComboboxPosture(self,text):
         self.str_fileName = text
-        print self.str_fileName
+        print(self.str_fileName)
 
     def OnButton_connect(self):
-        print "connect clicked"
+        print("connect clicked")
         if self.bool_comportConnected == False:
             self.bool_comportConnected = True
             self.serialDevice = serial.Serial(self.str_comport, self.str_baudrate,8,'N',1,0,0,0,0)
@@ -546,37 +520,37 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
     def OnSelect_ComboboxComport(self,text):
         self.str_comport = str(text)
-        print self.str_comport
+        print(self.str_comport)
 
     def OnSelect_ComboboxBaudrate(self,text):
         self.str_baudrate = str(text)
-        print self.str_baudrate
+        print(self.str_baudrate)
 
     def OnSelect_ComboboxKeyframe(self,text):
         self.str_keyframeSelected = text
-        print self.str_keyframeSelected
+        self.int_keyframeSelected = int(text)
+        print(self.int_keyframeSelected)
         self.SetValueKeyframeToShow()
 
     def SetValueKeyframeToShow(self):
 
-        for i in range(1,self.int_keyframe_Amount+1):
-            if self.str_keyframeSelected == 'Keyframe'+str(i):
-                keyframe = i
+        keyframe = self.int_keyframeSelected
 
         self.int_keyframeSelected = keyframe
 
-        print "keyframe selected = "
-        print self.int_keyframeSelected
-        #self.ui.activeKeyframe_checkBox.setChecked(self.bool_activeKeyframe[keyframe-1])
-        print self.bool_activeKeyframe
+        print("keyframe selected = ")
+        print(self.int_keyframeSelected)
+
 
         if self.bool_activeKeyframe[keyframe-1] == True:
             self.ui.activeKeyframe_checkBox.setChecked(2)
             self.SetButtonAndSpinCtrlEnable()
 
-            for i in self.int_id_All:
-                getattr(self.ui,"motor"+str(i)+"Value_spinBox").setValue(self.int_motorValue[keyframe-1][self.dic_motorIndexID['id'+str(i)]])
-                #self.ui.motor1Value_spinBox.setValue(self.int_motorValue[keyframe-1][self.dic_motorIndexID['id1']])
+            for id in self.int_id_All:
+                eval("self.ui.motor{}Value_spinBox".format(id)).setValue(
+                    self.int_motorValue[keyframe - 1][eval("self.dic_motorIndexID['id{}']".format(id))])
+
+
             self.ui.keyframeTime_spinBox.setValue(self.int_time[keyframe-1])
         else:
             self.ui.activeKeyframe_checkBox.setChecked(0)
@@ -623,25 +597,21 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             self.SetValueKeyframeToShow()
 
     def ActiveKeyframe_CheckBox(self):
-        print self.ui.activeKeyframe_checkBox.checkState()
+        print(self.ui.activeKeyframe_checkBox.checkState())
 
         if self.ui.activeKeyframe_checkBox.checkState() == 2:
-            print"Checked"
+            print("Checked")
 
-            for i in range(1,self.int_keyframe_Amount+1):
-                if self.str_keyframeSelected == 'Keyframe'+str(i):
-                    self.CheckPreviousKeyframe(i)
-                    self.int_numberOfKeyframe = i
+            self.CheckPreviousKeyframe(self.int_keyframeSelected)
+            self.int_numberOfKeyframe = self.int_keyframeSelected
 
-            #self.text_atSub0_numberOfKeyframe.SetLabel(str(self.int_numberOfKeyframe))
+
             self.ui.numOfKeyframeStatus_label.setText(str(self.int_numberOfKeyframe))
 
         else:
-            print "Unchecked"
-            for i in range(1,self.int_keyframe_Amount+1):
-                if self.str_keyframeSelected == 'Keyframe'+str(i):
-                    self.CheckNextKeyframe(i)
-                    self.int_numberOfKeyframe = (i-1)
+            print("Unchecked")
+            self.CheckNextKeyframe(self.int_keyframeSelected)
+            self.int_numberOfKeyframe = (self.int_keyframeSelected - 1)
 
             self.ui.numOfKeyframeStatus_label.setText(str(self.int_numberOfKeyframe))
 
@@ -679,17 +649,12 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.ui.setAll_pushButton.setEnabled(True)
         self.ui.keyframeTime_spinBox.setEnabled(True)
 
-        for i in self.int_id_All:
-            getattr(self.ui,"motor"+str(i)+"Value_spinBox").setEnabled(True)
-            getattr(self.ui,"motor"+str(i)+"value_dial").setEnabled(True)
-            getattr(self.ui,"motor"+str(i)+"Set_pushButton").setEnabled(True)
-            getattr(self.ui,"motor"+str(i)+"Get_pushButton").setEnabled(True)
-            getattr(self.ui,"motor"+str(i)+"DisT_pushButton").setEnabled(True)
-            # self.ui.motor1Value_spinBox.setEnabled(True)
-            # self.ui.motor1value_dial.setEnabled(True)
-            # self.ui.motor1Set_pushButton.setEnabled(True)
-            # self.ui.motor1Get_pushButton.setEnabled(True)
-            # self.ui.motor1DisT_pushButton.setEnabled(True)
+        for id in self.int_id_All:
+            eval("self.ui.motor{}Value_spinBox.setEnabled(True)".format(id))
+            eval("self.ui.motor{}value_dial.setEnabled(True)".format(id))
+            eval("self.ui.motor{}Set_pushButton.setEnabled(True)".format(id))
+            eval("self.ui.motor{}Get_pushButton.setEnabled(True)".format(id))
+            eval("self.ui.motor{}DisT_pushButton.setEnabled(True)".format(id))
 
     def SetButtonAndSpinCtrlDisable(self):
 
@@ -725,24 +690,18 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.ui.setAll_pushButton.setDisabled(True)
         self.ui.keyframeTime_spinBox.setDisabled(True)
 
-        for i in self.int_id_All:
-            getattr(self.ui,"motor"+str(i)+"Value_spinBox").setDisabled(True)
-            getattr(self.ui,"motor"+str(i)+"value_dial").setDisabled(True)
-            getattr(self.ui,"motor"+str(i)+"Set_pushButton").setDisabled(True)
-            getattr(self.ui,"motor"+str(i)+"Get_pushButton").setDisabled(True)
-            getattr(self.ui,"motor"+str(i)+"DisT_pushButton").setDisabled(True)
-            # self.ui.motor1Value_spinBox.setDisabled(True)
-            # self.ui.motor1value_dial.setDisabled(True)
-            # self.ui.motor1Set_pushButton.setDisabled(True)
-            # self.ui.motor1Get_pushButton.setDisabled(True)
-            # self.ui.motor1DisT_pushButton.setDisabled(True)
+        for id in self.int_id_All:
+            eval("self.ui.motor{}Value_spinBox.setDisabled(True)".format(id))
+            eval("self.ui.motor{}value_dial.setDisabled(True)".format(id))
+            eval("self.ui.motor{}Set_pushButton.setDisabled(True)".format(id))
+            eval("self.ui.motor{}Get_pushButton.setDisabled(True)".format(id))
+            eval("self.ui.motor{}DisT_pushButton.setDisabled(True)".format(id))
 
     def GetOrderKeyframe(self):
 
-        for i in range(1,self.int_keyframe_Amount+1):
-            if self.str_keyframeSelected == 'Keyframe'+str(i):
-                orderKeyframe = i
-
+        for index, kf in enumerate(self.keyframeList):
+            if self.int_keyframeSelected == int(kf):
+                orderKeyframe = index + 1
         return orderKeyframe
 
     def setReadMotorPacket(self,deviceID,Offset,Length):
@@ -763,23 +722,24 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             responsePacketSize = Length + 6
             #responsePacket = readAllData(serialDevice)
             responsePacket = self.serialDevice.read(self.serialDevice.inWaiting())
-            #responsePacket = serialDevice.read(responsePacketSize)
-            #print 'Response packet = %s' % repr( [ ord(c) for c in responsePacket ] )
-            # parse packet
-            #print "Lenght of response:", len(responsePacket)
+
             if len(responsePacket) == responsePacketSize:
-                                    #       finished reading
-                    responseID = ord(responsePacket[2])
-                    errorByte = ord(responsePacket[4])
-                    #print deviceID, responseID, errorByte
-                    if responseID == deviceID and errorByte == 0:
-                            if Length == 2:
-                                    queryData = ord(responsePacket[5]) + 256*ord(responsePacket[6])
-                            elif Length == 1:
-                                    queryData = ord(responsePacket[5])
-                            #print "Return data:", queryData
-                    else:
-                            print "Error response:", responseID, errorByte
+
+                print("responsePacket=", responsePacket)
+
+                responseID = responsePacket[2]
+                errorByte = responsePacket[4]
+
+                ### python 3
+                if responseID == deviceID and errorByte == 0:
+                    if Length == 2:
+                        queryData = responsePacket[5] + 256 * responsePacket[6]
+                    elif Length == 1:
+                        queryData = responsePacket[5]
+                        # print "Return data:", queryData
+                else:
+                    print("Error response:", responseID, errorByte)
+            print("queryData=", queryData)
             return queryData
 
     def get(self,deviceID, address, Length):
@@ -800,7 +760,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                     hiByte = int(value/256)
                     loByte = value%256
             else:
-                    print "rxPacketConversion: value out of range", value
+                    print("rxPacketConversion: value out of range", value)
             return loByte, hiByte
 
     def exPacketConversion( self,value ):
@@ -808,7 +768,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                     hiByte = int(value/256)
                     loByte = value%256
             else:
-                    print "exPacketConversion: value out of range", value
+                    print("exPacketConversion: value out of range", value)
             return loByte, hiByte
 
     def setDisableMotorTorque(self,deviceID):
@@ -870,7 +830,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         return motor_value
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     MainWindow = HumanoidMainWindow()
 
 
