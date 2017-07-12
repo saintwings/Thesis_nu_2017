@@ -77,11 +77,9 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         postureList = ['unknown','p1','p2','p3','p4','p5','p6','p7','p8','p9','p10']
         self.ui.posture_comboBox.addItems(postureList)
 
-        keyframeList = []
-        for i in range(1,self.int_keyframe_Amount+1):
-            keyframeList.append('Keyframe'+str(i))
+        self.keyframeList = [str(i) for i in range(1, 31)]
 
-        self.ui.keyFrame_comboBox.addItems(keyframeList)
+        self.ui.keyFrame_comboBox.addItems(self.keyframeList)
 
         self.ui.connectionStatus_label.setText("Status : Disconnect")
 
@@ -238,10 +236,13 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
     def OnButton_Set(self, id):
         print("set id=",id)
-        self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id' + str(id)]] = eval("self.ui.motor{}Value_spinBox.value()".format(id))
-        self.setDeviceMoving( self.str_comport, self.str_baudrate, id, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id' + str(id)]], 1023, 1023)
-        self.int_old_motorValue[self.dic_motorIndexID['id' + str(id)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id' + str(id)]]
-
+        self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id' + str(id)]] = eval(
+            "self.ui.motor{}Value_spinBox.value()".format(id))
+        self.setDeviceMoving(self.str_comport, self.str_baudrate, id, "Ex",
+                             self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id' + str(id)]],
+                             1023, 1023)
+        self.int_old_motorValue[self.dic_motorIndexID['id' + str(id)]] = \
+        self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id' + str(id)]]
 
     def OnButton_play(self):
         print("play...")
@@ -286,47 +287,71 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
     def OnButton_setLAll(self):
         print("set L all")
-        for i in self.int_id_L:
-            self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-
+        for id in self.int_id_L:
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))] = eval(
+                "self.ui.motor{}Value_spinBox.value()".format(id))
+            self.setDeviceMoving(self.str_comport, self.str_baudrate, id, "Ex",
+                                 self.int_motorValue[self.GetOrderKeyframe() - 1][
+                                     eval("self.dic_motorIndexID['id{}']".format(id))], 1023, 1023)
+            self.int_old_motorValue[eval("self.dic_motorIndexID['id{}']".format(id))] = \
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))]
+            time.sleep(0.015)
     def OnButton_setRAll(self):
         print("set R all")
-        for i in self.int_id_R:
-            self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-
+        for id in self.int_id_R:
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))] = eval(
+                "self.ui.motor{}Value_spinBox.value()".format(id))
+            self.setDeviceMoving(self.str_comport, self.str_baudrate, id, "Ex",
+                                 self.int_motorValue[self.GetOrderKeyframe() - 1][
+                                     eval("self.dic_motorIndexID['id{}']".format(id))], 1023, 1023)
+            self.int_old_motorValue[eval("self.dic_motorIndexID['id{}']".format(id))] = \
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))]
+            time.sleep(0.015)
     def OnButton_setLArmAll(self):
         print("set L arm all")
-        for i in self.int_id_LArm:
-            self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-
+        for id in self.int_id_LArm:
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))] = eval(
+                "self.ui.motor{}Value_spinBox.value()".format(id))
+            self.setDeviceMoving(self.str_comport, self.str_baudrate, id, "Ex",
+                                 self.int_motorValue[self.GetOrderKeyframe() - 1][
+                                     eval("self.dic_motorIndexID['id{}']".format(id))], 1023, 1023)
+            self.int_old_motorValue[eval("self.dic_motorIndexID['id{}']".format(id))] = \
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))]
+            time.sleep(0.015)
     def OnButton_setRArmAll(self):
         print("set R arm all")
-        for i in self.int_id_RArm:
-            self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-
+        for id in self.int_id_RArm:
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))] = eval(
+                "self.ui.motor{}Value_spinBox.value()".format(id))
+            self.setDeviceMoving(self.str_comport, self.str_baudrate, id, "Ex",
+                                 self.int_motorValue[self.GetOrderKeyframe() - 1][
+                                     eval("self.dic_motorIndexID['id{}']".format(id))], 1023, 1023)
+            self.int_old_motorValue[eval("self.dic_motorIndexID['id{}']".format(id))] = \
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))]
+            time.sleep(0.015)
     def OnButton_setHAll(self):
         print("set H all")
-        for i in self.int_id_H:
-            self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-
+        for id in self.int_id_H:
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))] = eval(
+                "self.ui.motor{}Value_spinBox.value()".format(id))
+            self.setDeviceMoving(self.str_comport, self.str_baudrate, id, "Ex",
+                                 self.int_motorValue[self.GetOrderKeyframe() - 1][
+                                     eval("self.dic_motorIndexID['id{}']".format(id))], 1023, 1023)
+            self.int_old_motorValue[eval("self.dic_motorIndexID['id{}']".format(id))] = \
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))]
+            time.sleep(0.015)
     def OnButton_setAll(self):
         print("set all")
         #self.int_time[self.GetOrderKeyframe() - 1] = self.spinctrl_time.GetValue()
-        for i in self.int_id_All:
-            self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            self.setDeviceMoving( self.str_comport, self.str_baudrate, i, "Ex", self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]], 1023, 1023)
-            self.int_old_motorValue[self.dic_motorIndexID['id'+str(i)]] = self.int_motorValue[self.GetOrderKeyframe() - 1][self.dic_motorIndexID['id'+str(i)]]
-
+        for id in self.int_id_All:
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))] = eval(
+                "self.ui.motor{}Value_spinBox.value()".format(id))
+            self.setDeviceMoving(self.str_comport, self.str_baudrate, id, "Ex",
+                                 self.int_motorValue[self.GetOrderKeyframe() - 1][
+                                     eval("self.dic_motorIndexID['id{}']".format(id))], 1023, 1023)
+            self.int_old_motorValue[eval("self.dic_motorIndexID['id{}']".format(id))] = \
+            self.int_motorValue[self.GetOrderKeyframe() - 1][eval("self.dic_motorIndexID['id{}']".format(id))]
+            time.sleep(0.015)
     def OnButton_time(self):
         self.int_time[self.GetOrderKeyframe() - 1] = self.ui.keyframeTime_spinBox.value()
         print(self.int_time[self.GetOrderKeyframe() - 1])
@@ -708,13 +733,10 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         readPacket = [0xFF, 0xFF, deviceID, 0x04, 0x02, Offset, Length]
         checkSumOrdList = readPacket[2:]
         checkSumOrdListSum = sum(checkSumOrdList)
-        computedCheckSum = ( ~(checkSumOrdListSum%256) ) % 256
+        computedCheckSum = (~(checkSumOrdListSum % 256)) % 256
         readPacket.append(computedCheckSum)
-        #print readPacket
-        str_packet = ''
-        str_packet = str_packet.join([chr(c) for c in readPacket])
-        self.serialDevice.write(str_packet)
-        #print str_packet
+        self.serialDevice.write(readPacket)
+        print(readPacket)
 
     def getMotorQueryResponse( self, deviceID, Length ):
 
@@ -722,6 +744,8 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             responsePacketSize = Length + 6
             #responsePacket = readAllData(serialDevice)
             responsePacket = self.serialDevice.read(self.serialDevice.inWaiting())
+
+
 
             if len(responsePacket) == responsePacketSize:
 
@@ -739,16 +763,27 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                         # print "Return data:", queryData
                 else:
                     print("Error response:", responseID, errorByte)
+
+                responsePacketStatue = True
+
+            else:
+                responsePacketStatue = False
+
             print("queryData=", queryData)
-            return queryData
+            return queryData,responsePacketStatue
 
     def get(self,deviceID, address, Length):
 
-            #serialDevice = serial.Serial(Port, Baud,8,'N',1,0,0,0,0)
-            self.setReadMotorPacket(deviceID, address, Length)
-            time.sleep(0.02)
-            data = self.getMotorQueryResponse(deviceID, Length)
-            #serialDevice.close()
+            for i in range(0,5):
+                self.setReadMotorPacket(deviceID, address, Length)
+                time.sleep(0.02)
+                data, status = self.getMotorQueryResponse(deviceID, Length)
+
+                if status == True:
+                    break
+                else:
+                    print("motor ID " + str(deviceID) + "  no response " + str(i))
+
             return data
 
     def getMotorPosition(self,id):
@@ -772,58 +807,41 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             return loByte, hiByte
 
     def setDisableMotorTorque(self,deviceID):
-            Offset = 0x18
-            Packet = [0xFF, 0xFF, deviceID, 0x04, 0x03, Offset, 0x00]
-            checkSumOrdList = Packet[2:]
-            checkSumOrdListSum = sum(checkSumOrdList)
-            computedCheckSum = ( ~(checkSumOrdListSum%256) ) % 256
-            Packet.append(computedCheckSum)
-            #print readPacket
-            str_packet = ''
-            str_packet = str_packet.join([chr(c) for c in Packet])
-            self.serialDevice.write(str_packet)
+        Offset = 0x18
+        Packet = [0xFF, 0xFF, deviceID, 0x04, 0x03, Offset, 0x00]
+        checkSumOrdList = Packet[2:]
+        checkSumOrdListSum = sum(checkSumOrdList)
+        computedCheckSum = (~(checkSumOrdListSum % 256)) % 256
+        Packet.append(computedCheckSum)
+        self.serialDevice.write(Packet)
+        print(Packet)
 
     def setDeviceMoving( self,Port, Baud, deviceID, deviceType, goalPos, goalSpeed, maxTorque):
 
+        Offset = 0x1E
+        Length = 6
+        numberOfServo = 1
+        packetLength = int((6 + 1) * numberOfServo + 4)
+        (goalSpeedL, goalSpeedH) = self.rxPacketConversion(goalSpeed)
+        (maxTorqueL, maxTorqueH) = self.rxPacketConversion(maxTorque)
 
-            #serialDevice = serial.Serial(Port, Baud,8,'N',1,0,0,0,0)
-            # for our use offset should be 0x1E, length 6 byte
-            # which are Goal position, Moving speed, Torque limit
-            Offset = 0x1E
-            Length = 6
-            numberOfServo = 1
-            packetLength = int((6+1)*numberOfServo+4)
-            (goalSpeedL,goalSpeedH) = self.rxPacketConversion(goalSpeed)
-            (maxTorqueL,maxTorqueH) = self.rxPacketConversion(maxTorque)
+        syncWritePacket = [0xFF, 0xFF, 0xFE, packetLength, 0x83, Offset, Length]
+        if deviceType == "Rx" or deviceType == "Ax":
+            (positionL, positionH) = self.rxPacketConversion(goalPos)
+        elif deviceType == "Ex" or deviceType == "Mx":
+            (positionL, positionH) = self.exPacketConversion(goalPos)
+        parameterList = [deviceID, positionL, positionH, goalSpeedL, goalSpeedH, maxTorqueL, maxTorqueH]
+        for parameter in parameterList:
+            syncWritePacket.append(parameter)
 
-            syncWritePacket = [0xFF, 0xFF, 0xFE, packetLength, 0x83, Offset, Length]
+        checkSumOrdList = syncWritePacket[2:]
+        checkSumOrdListSum = sum(checkSumOrdList)
+        computedCheckSum = (~(checkSumOrdListSum % 256)) % 256
+        syncWritePacket.append(computedCheckSum)
+        self.serialDevice.write(syncWritePacket)
 
-            if deviceType == "Rx" or deviceType == "Ax":
-                    (positionL, positionH) = self.rxPacketConversion(goalPos)
-            elif deviceType == "Ex" or deviceType == "Mx":
-                    (positionL, positionH) = self.exPacketConversion(goalPos)
-            parameterList = [deviceID, positionL, positionH, goalSpeedL,goalSpeedH,maxTorqueL,maxTorqueH]
-            for parameter in parameterList:
-                    syncWritePacket.append(parameter)
 
-            #print syncWritePacket
-
-            checkSumOrdList = syncWritePacket[2:]
-            checkSumOrdListSum = sum(checkSumOrdList)
-            computedCheckSum = ( ~(checkSumOrdListSum%256) ) % 256
-            syncWritePacket.append(computedCheckSum)
-
-            #print syncWritePacket
-
-            str_packet = ''
-            str_packet = str_packet.join([chr(c) for c in syncWritePacket])
-            self.serialDevice.write(str_packet)
-
-            #print "Already set"
-
-            #print str_packet
-            #serialDevice.close()
-
+        # print(syncWritePacket,"goalPos =",goalPos)
     def InterpolateMotorValue(self,finish_value,start_value,finish_time,start_time,current_time):
         motor_value = int((finish_value - start_value)*(current_time-start_time)/(finish_time - start_time)+start_value)
         #print motor_value
