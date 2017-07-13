@@ -923,6 +923,9 @@ class Ui_Form(object):
         self.numOfKeyframeStatus_label = QtWidgets.QLabel(self.horizontalLayoutWidget_4)
         self.numOfKeyframeStatus_label.setObjectName("numOfKeyframeStatus_label")
         self.horizontalLayout_10.addWidget(self.numOfKeyframeStatus_label)
+        self.generateGetupFile_pushButton = QtWidgets.QPushButton(Form)
+        self.generateGetupFile_pushButton.setGeometry(QtCore.QRect(250, 10, 171, 22))
+        self.generateGetupFile_pushButton.setObjectName("generateGetupFile_pushButton")
         self.layoutWidget.raise_()
         self.layoutWidget.raise_()
         self.layoutWidget.raise_()
@@ -937,6 +940,7 @@ class Ui_Form(object):
         self.loadFile_pushButton.raise_()
         self.saveFile_pushButton.raise_()
         self.horizontalLayoutWidget_4.raise_()
+        self.generateGetupFile_pushButton.raise_()
 
         self.retranslateUi(Form)
         self.motor1value_dial.valueChanged['int'].connect(self.motor1Value_spinBox.setValue)
@@ -1171,6 +1175,7 @@ class Ui_Form(object):
         self.fileName_label.setText(_translate("Form", "File Name"))
         self.numOfKeyframe_label.setText(_translate("Form", "Number of Keyframe"))
         self.numOfKeyframeStatus_label.setText(_translate("Form", "0"))
+        self.generateGetupFile_pushButton.setText(_translate("Form", "Generate Getup File"))
 
 
 if __name__ == "__main__":

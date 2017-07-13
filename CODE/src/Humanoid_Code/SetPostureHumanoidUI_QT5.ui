@@ -1904,6 +1904,19 @@
     </item>
    </layout>
   </widget>
+  <widget class="QPushButton" name="generateGetupFile_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>10</y>
+     <width>171</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Generate Getup File</string>
+   </property>
+  </widget>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
@@ -1918,6 +1931,7 @@
   <zorder>loadFile_pushButton</zorder>
   <zorder>saveFile_pushButton</zorder>
   <zorder>horizontalLayoutWidget_4</zorder>
+  <zorder>generateGetupFile_pushButton</zorder>
  </widget>
  <resources/>
  <connections>
