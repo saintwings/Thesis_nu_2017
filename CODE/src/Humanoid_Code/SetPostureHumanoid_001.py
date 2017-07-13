@@ -34,29 +34,46 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.int_keyframeSelected = 1
         self.bool_comportConnected = False
         self.int_numberOfKeyframe = 0
-        self.str_fileName = 'Unknown'
+        self.str_fileName = 'test'
         self.str_comport = 'com81'
         self.str_baudrate = 1000000
         self.int_keyframe = 0
         self.int_motorID = 0
         self.bool_activeKeyframe =[False for x in range (self.int_keyframe_Amount)]
-        file_center = open('motor_center.txt', 'r')
-        self.int_motorCenterValue = file_center.read()
-        file_center.close()
-        self.int_motorCenterValue = self.int_motorCenterValue.split('\n')
-        print (self.int_motorCenterValue)
-        #cast motorCenterValue from str to int#
-        for x in range (self.int_motor_Amount):
-            self.int_motorCenterValue[x] = int(self.int_motorCenterValue[x])
-        file_type = open('motor_type.txt', 'r')
-        self.str_motorType = file_type.read()
+        # file_center = open('motor_center.txt', 'r')
+        # self.int_motorCenterValue = file_center.read()
+        # file_center.close()
+        # self.int_motorCenterValue = self.int_motorCenterValue.split('\n')
+        # print (self.int_motorCenterValue)
+        # #cast motorCenterValue from str to int#
+        # for x in range (self.int_motor_Amount):
+        #     self.int_motorCenterValue[x] = int(self.int_motorCenterValue[x])
+        # file_type = open('motor_type.txt', 'r')
+        # self.str_motorType = file_type.read()
+        # print(self.str_motorType)
+        # file_type.close()
+        # self.str_motorType = self.str_motorType.split('\n')
+        # print(self.str_motorType)
+        # #print self.int_motorCenterValue
+        # #print len(self.int_motorCenterValue)
+        # ##self.int_motorValue[keyframe0-14][motorID0-17]##
+
+
+        config_default = ConfigObj('mx_default.ini')
+        self.config_current = config_default
+
+        print(config_default['motors type'])
+
+        self.str_motorType = config_default['motors type']['left leg'] + config_default['motors type']['right leg'] + \
+                             config_default['motors type']['left arm'] + config_default['motors type']['right arm'] + \
+                             config_default['motors type']['head']
         print(self.str_motorType)
-        file_type.close()
-        self.str_motorType = self.str_motorType.split('\n')
-        print(self.str_motorType)
-        #print self.int_motorCenterValue
-        #print len(self.int_motorCenterValue)
-        ##self.int_motorValue[keyframe0-14][motorID0-17]##
+        self.int_motorCenterValue = config_default['motors center']['left leg'] + config_default['motors center'][
+            'right leg'] + config_default['motors center']['left arm'] + config_default['motors center']['right arm'] + \
+                                    config_default['motors center']['head']
+        print(self.int_motorCenterValue)
+
+
         self.int_old_motorValue = [self.int_motorCenterValue[x] for x in range (self.int_motor_Amount)]
         self.int_backup_motorValue = [self.int_motorCenterValue[x] for x in range (self.int_motor_Amount)]
         self.int_motorValue = [[self.int_motorCenterValue[x] for x in range (self.int_motor_Amount)] for y in range (self.int_keyframe_Amount)]
@@ -67,6 +84,9 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                                  'id31':16,'id32':17,'id33':18,'id34':19,
                                  'id41':20,'id42':21,'id43':22}
         self.int_time = [self.int_time_Initial for x in range (self.int_keyframe_Amount)]
+
+
+
 
     def InitUI(self):
 
@@ -511,39 +531,62 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
         self.ui.fileName_label.setText(self.str_fileName)
 
-        namePosture = self.str_fileName + '.txt'
-        print(namePosture)
-
-        file_posture = open(namePosture, 'r')
-        str_load_data = file_posture.read()
-        file_posture.close()
-        str_load_data = str_load_data.split('\n')
-        self.int_numberOfKeyframe = int(str_load_data[0])
-
-        #self.text_atSub0_numberOfKeyframe.SetLabel(str(self.int_numberOfKeyframe))
+        self.int_numberOfKeyframe = int(self.config_current[self.str_fileName]['Keyframe_Amount'])
         self.ui.numOfKeyframeStatus_label.setText(str(self.int_numberOfKeyframe))
 
-        int_count_data = 1
-        for x in range (self.int_numberOfKeyframe):
+        for x in range(self.int_numberOfKeyframe):
             self.bool_activeKeyframe[x] = True
-            for y in range (self.int_motor_Amount):
-                self.int_motorValue[x][y] = int(str_load_data[int_count_data])
-                int_count_data = int_count_data + 1
-        for z in range (self.int_numberOfKeyframe,self.int_keyframe_Amount):
+            for y in range(self.int_motor_Amount):
+                self.int_motorValue[x][y] = int(self.config_current[self.str_fileName]['Keyframe_Value']['Keyframe_' +str(x)][y])
+            print(self.int_motorValue[x])
+
+        for z in range(self.int_numberOfKeyframe, self.int_keyframe_Amount):
             self.bool_activeKeyframe[z] = False
 
-        nameTime = self.str_fileName + '_time.txt'
+        for x in range(self.int_numberOfKeyframe):
+            self.int_time[x] = int(self.config_current[self.str_fileName]['Keyframe_Time'][x])
 
-        file_Time = open(nameTime,'r')
-        str_load_data = file_Time.read()
-        file_Time.close()
-        str_load_data = str_load_data.split('\n')
-        int_count_data = 1
-        for x in range (self.int_numberOfKeyframe):
-            self.int_time[x] = int(str_load_data[int_count_data])
-            int_count_data = int_count_data + 1
 
         self.SetValueKeyframeToShow()
+
+
+        #####################################################
+
+        # self.ui.fileName_label.setText(self.str_fileName)
+        #
+        # namePosture = self.str_fileName + '.txt'
+        # print(namePosture)
+        #
+        # file_posture = open(namePosture, 'r')
+        # str_load_data = file_posture.read()
+        # file_posture.close()
+        # str_load_data = str_load_data.split('\n')
+        # self.int_numberOfKeyframe = int(str_load_data[0])
+        #
+        # #self.text_atSub0_numberOfKeyframe.SetLabel(str(self.int_numberOfKeyframe))
+        # self.ui.numOfKeyframeStatus_label.setText(str(self.int_numberOfKeyframe))
+        #
+        # int_count_data = 1
+        # for x in range (self.int_numberOfKeyframe):
+        #     self.bool_activeKeyframe[x] = True
+        #     for y in range (self.int_motor_Amount):
+        #         self.int_motorValue[x][y] = int(str_load_data[int_count_data])
+        #         int_count_data = int_count_data + 1
+        # for z in range (self.int_numberOfKeyframe,self.int_keyframe_Amount):
+        #     self.bool_activeKeyframe[z] = False
+        #
+        # nameTime = self.str_fileName + '_time.txt'
+        #
+        # file_Time = open(nameTime,'r')
+        # str_load_data = file_Time.read()
+        # file_Time.close()
+        # str_load_data = str_load_data.split('\n')
+        # int_count_data = 1
+        # for x in range (self.int_numberOfKeyframe):
+        #     self.int_time[x] = int(str_load_data[int_count_data])
+        #     int_count_data = int_count_data + 1
+        #
+        # self.SetValueKeyframeToShow()
 
     def OnButton_Save(self):
         print("Save")
