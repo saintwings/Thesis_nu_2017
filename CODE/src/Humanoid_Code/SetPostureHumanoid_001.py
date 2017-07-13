@@ -1,6 +1,5 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import (QMainWindow, QTextEdit,
-    QAction, QFileDialog, QApplication)
+from PyQt5.QtWidgets import (QFileDialog)
 from SetPostureHumanoidUI_QT5 import Ui_Form
 import time
 import serial
@@ -34,32 +33,16 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.int_keyframeSelected = 1
         self.bool_comportConnected = False
         self.int_numberOfKeyframe = 0
-        self.str_fileName = 'test'
+        self.str_fileName = 'mx_default.ini'
+        self.str_postureName = 'test'
         self.str_comport = 'com81'
         self.str_baudrate = 1000000
         self.int_keyframe = 0
         self.int_motorID = 0
         self.bool_activeKeyframe =[False for x in range (self.int_keyframe_Amount)]
-        # file_center = open('motor_center.txt', 'r')
-        # self.int_motorCenterValue = file_center.read()
-        # file_center.close()
-        # self.int_motorCenterValue = self.int_motorCenterValue.split('\n')
-        # print (self.int_motorCenterValue)
-        # #cast motorCenterValue from str to int#
-        # for x in range (self.int_motor_Amount):
-        #     self.int_motorCenterValue[x] = int(self.int_motorCenterValue[x])
-        # file_type = open('motor_type.txt', 'r')
-        # self.str_motorType = file_type.read()
-        # print(self.str_motorType)
-        # file_type.close()
-        # self.str_motorType = self.str_motorType.split('\n')
-        # print(self.str_motorType)
-        # #print self.int_motorCenterValue
-        # #print len(self.int_motorCenterValue)
-        # ##self.int_motorValue[keyframe0-14][motorID0-17]##
 
-
-        config_default = ConfigObj('mx_default.ini')
+        self.ui.fileName_label.setText(self.str_fileName)
+        config_default = ConfigObj(self.str_fileName)
         self.config_current = config_default
 
         print(config_default['motors type'])
@@ -72,6 +55,8 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             'right leg'] + config_default['motors center']['left arm'] + config_default['motors center']['right arm'] + \
                                     config_default['motors center']['head']
         print(self.int_motorCenterValue)
+
+        self.int_motorCenterValue = [int(self.int_motorCenterValue[x]) for x in range (self.int_motor_Amount)]
 
 
         self.int_old_motorValue = [self.int_motorCenterValue[x] for x in range (self.int_motor_Amount)]
@@ -169,6 +154,8 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.ui.saveFile_pushButton.clicked.connect(self.OnButton_saveFile)
         self.ui.loadFile_pushButton.clicked.connect(self.OnButton_loadFile)
 
+        #self.OnButton_Load()
+
     def OnButton_saveFile(self):
         fname = QFileDialog.getSaveFileName(self, 'Save file', './Postures/', "OBJ (*.ini)")
 
@@ -176,32 +163,22 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         print("save file")
         if fname[0]:
             config = ConfigObj()
+            config = self.config_current
             config.filename = fname[0]
-            config['motors type'] = {}
-            config['motors type']['left leg'] = self.str_motorType[0:6]
-            config['motors type']['right leg'] = self.str_motorType[6:12]
-            config['motors type']['left arm'] = self.str_motorType[12:16]
-            config['motors type']['right arm'] = self.str_motorType[16:20]
-            config['motors type']['head'] = self.str_motorType[20:23]
-            config['motors center'] = {}
-            config['motors center']['left leg'] = self.int_motorCenterValue[0:6]
-            config['motors center']['right leg'] = self.int_motorCenterValue[6:12]
-            config['motors center']['left arm'] = self.int_motorCenterValue[12:16]
-            config['motors center']['right arm'] = self.int_motorCenterValue[16:20]
-            config['motors center']['head'] = self.int_motorCenterValue[20:23]
-
-            for posture in self.postureList:
-                config[posture] = {}
-                config[posture]['Keyframe_Amount'] = self.int_numberOfKeyframe
-                config[posture]['Keyframe_Time'] = self.int_time[:self.int_numberOfKeyframe]
-                config[posture]['Keyframe_Value'] = {}
-                for i in range(self.int_numberOfKeyframe):
-                    config[posture]['Keyframe_Value']['Keyframe_' + str(i)] = self.int_motorValue[i]
             config.write()
+
+            self.config_current = config
+
+            self.ui.fileName_label.setText((fname[0].split("/")[len(fname[0].split("/")) - 1]))
+
+            self.OnButton_Load()
 
 
 
     def OnButton_loadFile(self):
+
+        #self.str_fileName = 'mx_default.ini'
+
         fname = QFileDialog.getOpenFileName(self, 'Open file', './Postures', "OBJ (*.ini)")
 
         if fname[0]:
@@ -211,36 +188,12 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                 print("file name", fname[0])
                 config = ConfigObj(fname[0])
 
-                self.present_filename = fname[0].split("/")[len(fname[0].split("/")) - 1]
-                self.present_filepath = fname[0]
-                print("present file name =", self.present_filename)
+                self.config_current = config
 
                 self.ui.fileName_label.setText((fname[0].split("/")[len(fname[0].split("/")) - 1]))
 
-                self.int_numberOfKeyframe = int(config['Keyframe_Amount'])
-                self.ui.numOfKeyframeStatus_label.setText(str(self.int_numberOfKeyframe))
-                try:
-                    self.str_keyframe_gesture_type = config['Keyframe_Posture_Type']
-                    print("load keyframe type OK!!")
-                except:
-                    self.str_keyframe_gesture_type = []
-                    for i in range(self.int_numberOfKeyframe):
-                        if i == 0:
-                            self.str_keyframe_gesture_type.append('ready')
-                        else:
-                            self.str_keyframe_gesture_type.append('main')
-                    print("renew gesture type!!!")
-                print(self.str_keyframe_gesture_type)
-                for i in range(int(self.int_numberOfKeyframe)):
-                    self.bool_activeKeyframe[i] = True
-                    self.int_motorValue[i] = list(map(int, config['Keyframe_Value']['Keyframe_' + str(i)]))
+                self.OnButton_Load()
 
-                    self.int_time[i] = int(config['Keyframe_Time'][i])
-
-                for i in range(int(self.int_numberOfKeyframe), 30):
-                    self.bool_activeKeyframe[i] = False
-
-                self.SetValueKeyframeToShow()
 
     def Search_Comport(self):
         ports = list(serial.tools.list_ports.comports())
@@ -249,7 +202,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
     def OnIndexChange_ComboboxComport(self,text):
         self.str_comport = str(text)
-        print(self.str_fileName)
+        print(self.str_postureName)
 
     def OnButton_Delete(self):
         #self.ui.keyFrame_comboBox.
@@ -527,105 +480,43 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
     def OnButton_Load(self):
         print("Load")
-        print(self.str_fileName)
+        print(self.str_postureName)
 
-        self.ui.fileName_label.setText(self.str_fileName)
+        self.ui.postureName_label.setText(self.str_postureName)
 
-        self.int_numberOfKeyframe = int(self.config_current[self.str_fileName]['Keyframe_Amount'])
+        self.int_numberOfKeyframe = int(self.config_current[self.str_postureName]['Keyframe_Amount'])
         self.ui.numOfKeyframeStatus_label.setText(str(self.int_numberOfKeyframe))
 
         for x in range(self.int_numberOfKeyframe):
             self.bool_activeKeyframe[x] = True
             for y in range(self.int_motor_Amount):
-                self.int_motorValue[x][y] = int(self.config_current[self.str_fileName]['Keyframe_Value']['Keyframe_' +str(x)][y])
+                self.int_motorValue[x][y] = int(self.config_current[self.str_postureName]['Keyframe_Value']['Keyframe_' +str(x)][y])
             print(self.int_motorValue[x])
 
         for z in range(self.int_numberOfKeyframe, self.int_keyframe_Amount):
             self.bool_activeKeyframe[z] = False
 
         for x in range(self.int_numberOfKeyframe):
-            self.int_time[x] = int(self.config_current[self.str_fileName]['Keyframe_Time'][x])
-
+            self.int_time[x] = int(self.config_current[self.str_postureName]['Keyframe_Time'][x])
 
         self.SetValueKeyframeToShow()
 
-
-        #####################################################
-
-        # self.ui.fileName_label.setText(self.str_fileName)
-        #
-        # namePosture = self.str_fileName + '.txt'
-        # print(namePosture)
-        #
-        # file_posture = open(namePosture, 'r')
-        # str_load_data = file_posture.read()
-        # file_posture.close()
-        # str_load_data = str_load_data.split('\n')
-        # self.int_numberOfKeyframe = int(str_load_data[0])
-        #
-        # #self.text_atSub0_numberOfKeyframe.SetLabel(str(self.int_numberOfKeyframe))
-        # self.ui.numOfKeyframeStatus_label.setText(str(self.int_numberOfKeyframe))
-        #
-        # int_count_data = 1
-        # for x in range (self.int_numberOfKeyframe):
-        #     self.bool_activeKeyframe[x] = True
-        #     for y in range (self.int_motor_Amount):
-        #         self.int_motorValue[x][y] = int(str_load_data[int_count_data])
-        #         int_count_data = int_count_data + 1
-        # for z in range (self.int_numberOfKeyframe,self.int_keyframe_Amount):
-        #     self.bool_activeKeyframe[z] = False
-        #
-        # nameTime = self.str_fileName + '_time.txt'
-        #
-        # file_Time = open(nameTime,'r')
-        # str_load_data = file_Time.read()
-        # file_Time.close()
-        # str_load_data = str_load_data.split('\n')
-        # int_count_data = 1
-        # for x in range (self.int_numberOfKeyframe):
-        #     self.int_time[x] = int(str_load_data[int_count_data])
-        #     int_count_data = int_count_data + 1
-        #
-        # self.SetValueKeyframeToShow()
-
     def OnButton_Save(self):
         print("Save")
-        print(self.str_fileName)
+        print(self.str_postureName)
 
-        self.ui.fileName_label.setText(self.str_fileName)
+        self.ui.postureName_label.setText(self.str_postureName)
 
-        namePosture = self.str_fileName + '.txt'
-        print(namePosture)
-        file_posture = open(namePosture, 'w')
-        file_posture.write(str(self.int_numberOfKeyframe)+'\n')
-        for x in range (self.int_numberOfKeyframe):
-            #file_frontGetup.write(str(x+1)+'\n')
-            for y in range (self.int_motor_Amount):
-                file_posture.write(str(self.int_motorValue[x][y])+'\n')
+        config = self.config_current
 
-        file_posture.close()
+        config[self.str_postureName] = {}
+        config[self.str_postureName]['Keyframe_Amount'] = self.int_numberOfKeyframe
+        config[self.str_postureName]['Keyframe_Time'] = self.int_time[:self.int_numberOfKeyframe]
+        config[self.str_postureName]['Keyframe_Value'] = {}
+        for i in range(self.int_numberOfKeyframe):
+            config[self.str_postureName]['Keyframe_Value']['Keyframe_' + str(i)] = self.int_motorValue[i]
 
-        namePosture = self.str_fileName + '_3.txt'
-        file_posture = open(namePosture, 'w')
-        file_posture.write(str(self.int_numberOfKeyframe)+'\n')
-        for x in range (self.int_numberOfKeyframe):
-            #file_frontGetup.write(str(x+1)+'\n')
-            file_posture.write('{ ')
-            for y in range (self.int_motor_Amount-4):
-                if y != 15:
-                    file_posture.write(str(self.int_motorValue[x][y])+' ,')
-            file_posture.write('/*Time*/ ')
-            file_posture.write(str(self.int_time[x])+'*0.1}\n')
-
-        file_posture.close()
-
-        nameTime = self.str_fileName + '_time.txt'
-
-        file_Time = open(nameTime,'w')
-        file_Time.write(str(self.int_numberOfKeyframe)+'\n')
-        for x in range (self.int_numberOfKeyframe):
-            file_Time.write(str(self.int_time[x])+'\n')
-        file_Time.close()
+        config.write()
 
     def SetMotorCenterLabel(self):
         for i in self.int_id_All:
@@ -634,21 +525,45 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                     i))
 
     def OnButton_SaveCenter(self):
-        file_center = open('motor_center.txt', 'w')
-        for i in self.int_id_All:
-            self.int_motorCenterValue[self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-            #self.int_motorCenterValue[self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
+        config = self.config_current
 
-        for y in range (self.int_motor_Amount):
-                file_center.write(str(self.int_motorCenterValue[y])+'\n')
+        for id in self.int_id_All:
+            self.int_motorCenterValue[eval("self.dic_motorIndexID['id{}']".format(id))] = eval(
+                "self.ui.motor{}Value_spinBox.value()".format(id))
 
-        file_center.close()
+
+        print("aaaaaaaaaaaaaaaaaaaaa")
+        config['motors type']['left leg'] = self.int_motorCenterValue[0:6]
+        config['motors type']['right leg'] = self.int_motorCenterValue[6:12]
+        config['motors type']['left arm'] = self.int_motorCenterValue[12:16]
+        config['motors type']['right arm'] = self.int_motorCenterValue[16:20]
+        config['motors type']['head'] = self.int_motorCenterValue[20:23]
+
+        config.write()
+
+        #
+        # for y in range (self.int_motor_Amount):
+        #         file_center.write(str(self.int_motorCenterValue[y])+'\n')
+        #
+        # file_center.close()
+
+
+
+        # file_center = open('motor_center.txt', 'w')
+        # for i in self.int_id_All:
+        #     self.int_motorCenterValue[self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
+        #     #self.int_motorCenterValue[self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
+        #
+        # for y in range (self.int_motor_Amount):
+        #         file_center.write(str(self.int_motorCenterValue[y])+'\n')
+        #
+        # file_center.close()
 
         self.SetMotorCenterLabel()
 
     def OnSelect_ComboboxPosture(self,text):
-        self.str_fileName = text
-        print(self.str_fileName)
+        self.str_postureName = text
+        print(self.str_postureName)
 
     def OnButton_connect(self):
         print("connect clicked")
@@ -690,18 +605,17 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         if self.bool_activeKeyframe[keyframe-1] == True:
             self.ui.activeKeyframe_checkBox.setChecked(2)
             self.SetButtonAndSpinCtrlEnable()
-
             for id in self.int_id_All:
                 eval("self.ui.motor{}Value_spinBox".format(id)).setValue(
-                    self.int_motorValue[keyframe - 1][eval("self.dic_motorIndexID['id{}']".format(id))])
-
-
+                    int(self.int_motorValue[keyframe - 1][eval("self.dic_motorIndexID['id{}']".format(id))]))
             self.ui.keyframeTime_spinBox.setValue(self.int_time[keyframe-1])
         else:
             self.ui.activeKeyframe_checkBox.setChecked(0)
             self.SetButtonAndSpinCtrlDisable()
 
     def CheckPreviousKeyframe(self,currentKeyframe):
+
+
         if currentKeyframe == 1:
             self.bool_activeKeyframe[currentKeyframe-1] = True
             self.SetValueKeyframeToShow()
@@ -748,6 +662,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             print("Checked")
 
             self.CheckPreviousKeyframe(self.int_keyframeSelected)
+            print('aaaaaaaaaaa')
             self.int_numberOfKeyframe = self.int_keyframeSelected
 
 
@@ -855,7 +770,10 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         checkSumOrdListSum = sum(checkSumOrdList)
         computedCheckSum = (~(checkSumOrdListSum % 256)) % 256
         readPacket.append(computedCheckSum)
-        self.serialDevice.write(readPacket)
+        try:
+            self.serialDevice.write(readPacket)
+        except:
+            print("Serial Error!! [setReadMotorPacket]")
         print(readPacket)
 
     def getMotorQueryResponse( self, deviceID, Length ):
@@ -933,7 +851,10 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         checkSumOrdListSum = sum(checkSumOrdList)
         computedCheckSum = (~(checkSumOrdListSum % 256)) % 256
         Packet.append(computedCheckSum)
-        self.serialDevice.write(Packet)
+        try:
+            self.serialDevice.write(Packet)
+        except:
+            print("Serial Error!! [setDisableMotorTorque]")
         print(Packet)
 
     def setDeviceMoving( self,Port, Baud, deviceID, deviceType, goalPos, goalSpeed, maxTorque):
@@ -958,7 +879,11 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         checkSumOrdListSum = sum(checkSumOrdList)
         computedCheckSum = (~(checkSumOrdListSum % 256)) % 256
         syncWritePacket.append(computedCheckSum)
-        self.serialDevice.write(syncWritePacket)
+        try:
+            self.serialDevice.write(syncWritePacket)
+
+        except:
+            print("Serial Error!! [setDeviceMoving]")
 
 
         # print(syncWritePacket,"goalPos =",goalPos)
