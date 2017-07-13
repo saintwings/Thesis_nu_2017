@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>979</width>
-    <height>700</height>
+    <width>994</width>
+    <height>740</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>490</y>
+     <y>530</y>
      <width>471</width>
      <height>201</height>
     </rect>
@@ -293,9 +293,9 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>190</y>
-     <width>477</width>
+     <x>500</x>
+     <y>230</y>
+     <width>471</width>
      <height>291</height>
     </rect>
    </property>
@@ -691,8 +691,8 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>190</y>
-     <width>469</width>
+     <y>230</y>
+     <width>471</width>
      <height>291</height>
     </rect>
    </property>
@@ -1088,21 +1088,14 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>30</y>
-     <width>371</width>
-     <height>51</height>
+     <y>100</y>
+     <width>471</width>
+     <height>31</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLabel" name="file_label">
-        <property name="text">
-         <string>File::</string>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QLabel" name="play_label">
         <property name="text">
@@ -1115,13 +1108,6 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLabel" name="fileName_label">
-        <property name="text">
-         <string>File Name</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QLabel" name="allKeyframe_label">
         <property name="text">
          <string>All Keyframe</string>
@@ -1133,13 +1119,6 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QLabel" name="numOfKeyframe_label">
-        <property name="text">
-         <string>Number of Keyframe</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="setReady_Button">
         <property name="text">
          <string>Set Ready</string>
@@ -1150,13 +1129,6 @@
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_4">
-      <item>
-       <widget class="QLabel" name="numOfKeyframeStatus_label">
-        <property name="text">
-         <string>0</string>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QPushButton" name="playAll_Button">
         <property name="text">
@@ -1172,8 +1144,8 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>80</y>
-     <width>417</width>
+     <y>130</y>
+     <width>471</width>
      <height>31</height>
     </rect>
    </property>
@@ -1211,8 +1183,8 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>140</y>
-     <width>462</width>
+     <y>190</y>
+     <width>471</width>
      <height>31</height>
     </rect>
    </property>
@@ -1260,9 +1232,9 @@
   <widget class="QWidget" name="horizontalLayoutWidget_3">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>0</y>
-     <width>441</width>
+     <x>500</x>
+     <y>10</y>
+     <width>471</width>
      <height>29</height>
     </rect>
    </property>
@@ -1293,8 +1265,8 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>0</y>
-     <width>432</width>
+     <y>70</y>
+     <width>471</width>
      <height>29</height>
     </rect>
    </property>
@@ -1336,8 +1308,8 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>110</y>
-     <width>371</width>
+     <y>160</y>
+     <width>471</width>
      <height>31</height>
     </rect>
    </property>
@@ -1375,9 +1347,9 @@
   <widget class="QWidget" name="verticalLayoutWidget_8">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>490</y>
-     <width>477</width>
+     <x>500</x>
+     <y>530</y>
+     <width>471</width>
      <height>201</height>
     </rect>
    </property>
@@ -1652,10 +1624,10 @@
   <widget class="QWidget" name="verticalLayoutWidget_9">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>30</y>
-     <width>477</width>
-     <height>161</height>
+     <x>500</x>
+     <y>50</y>
+     <width>471</width>
+     <height>171</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -1866,6 +1838,72 @@
     </item>
    </layout>
   </widget>
+  <widget class="QPushButton" name="loadFile_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>80</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>load file</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="saveFile_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>10</y>
+     <width>80</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>save file</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget_4">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>471</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_10">
+    <item>
+     <widget class="QLabel" name="file_label">
+      <property name="text">
+       <string>File::</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="fileName_label">
+      <property name="text">
+       <string>File Name</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="numOfKeyframe_label">
+      <property name="text">
+       <string>Number of Keyframe</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="numOfKeyframeStatus_label">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
@@ -1877,6 +1915,9 @@
   <zorder>verticalLayoutWidget_8</zorder>
   <zorder>verticalLayoutWidget_9</zorder>
   <zorder>verticalLayoutWidget_7</zorder>
+  <zorder>loadFile_pushButton</zorder>
+  <zorder>saveFile_pushButton</zorder>
+  <zorder>horizontalLayoutWidget_4</zorder>
  </widget>
  <resources/>
  <connections>
