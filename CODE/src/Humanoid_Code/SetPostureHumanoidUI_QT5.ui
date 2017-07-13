@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>994</width>
-    <height>740</height>
+    <width>985</width>
+    <height>759</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>530</y>
+     <y>550</y>
      <width>471</width>
      <height>201</height>
     </rect>
@@ -294,7 +294,7 @@
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>230</y>
+     <y>250</y>
      <width>471</width>
      <height>291</height>
     </rect>
@@ -691,7 +691,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>230</y>
+     <y>250</y>
      <width>471</width>
      <height>291</height>
     </rect>
@@ -1088,7 +1088,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>100</y>
+     <y>120</y>
      <width>471</width>
      <height>31</height>
     </rect>
@@ -1144,7 +1144,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>130</y>
+     <y>150</y>
      <width>471</width>
      <height>31</height>
     </rect>
@@ -1183,7 +1183,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>190</y>
+     <y>210</y>
      <width>471</width>
      <height>31</height>
     </rect>
@@ -1265,16 +1265,16 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>70</y>
+     <y>90</y>
      <width>471</width>
      <height>29</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_23">
     <item>
-     <widget class="QLabel" name="postureName_label">
+     <widget class="QLabel" name="postureSelect_label">
       <property name="text">
-       <string>Posture Name</string>
+       <string>Posture Select</string>
       </property>
      </widget>
     </item>
@@ -1308,7 +1308,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>160</y>
+     <y>180</y>
      <width>471</width>
      <height>31</height>
     </rect>
@@ -1348,7 +1348,7 @@
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>530</y>
+     <y>550</y>
      <width>471</width>
      <height>201</height>
     </rect>
@@ -1625,9 +1625,9 @@
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>50</y>
+     <y>70</y>
      <width>471</width>
-     <height>171</height>
+     <height>161</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -1842,7 +1842,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>30</y>
      <width>80</width>
      <height>22</height>
     </rect>
@@ -1855,7 +1855,7 @@
    <property name="geometry">
     <rect>
      <x>100</x>
-     <y>10</y>
+     <y>30</y>
      <width>80</width>
      <height>22</height>
     </rect>
@@ -1868,23 +1868,23 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>50</y>
+     <y>60</y>
      <width>471</width>
      <height>21</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_10">
     <item>
-     <widget class="QLabel" name="file_label">
+     <widget class="QLabel" name="posture_label">
       <property name="text">
-       <string>File::</string>
+       <string>Posture::</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="fileName_label">
+     <widget class="QLabel" name="postureName_label">
       <property name="text">
-       <string>File Name</string>
+       <string>Posture Name</string>
       </property>
      </widget>
     </item>
@@ -1907,14 +1907,53 @@
   <widget class="QPushButton" name="generateGetupFile_pushButton">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>10</y>
+     <x>310</x>
+     <y>30</y>
      <width>171</width>
      <height>22</height>
     </rect>
    </property>
    <property name="text">
     <string>Generate Getup File</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="fileName_label">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>10</y>
+     <width>109</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>File Name</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="file_label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>152</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>File::</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="changeMotor_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>30</y>
+     <width>111</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>change motor</string>
    </property>
   </widget>
   <zorder>layoutWidget</zorder>
@@ -1932,6 +1971,9 @@
   <zorder>saveFile_pushButton</zorder>
   <zorder>horizontalLayoutWidget_4</zorder>
   <zorder>generateGetupFile_pushButton</zorder>
+  <zorder>fileName_label</zorder>
+  <zorder>file_label</zorder>
+  <zorder>changeMotor_pushButton</zorder>
  </widget>
  <resources/>
  <connections>
