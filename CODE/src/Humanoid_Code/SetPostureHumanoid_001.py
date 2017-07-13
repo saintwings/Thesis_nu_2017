@@ -6,6 +6,7 @@ import time
 import serial
 import sys
 import serial.tools.list_ports
+from configobj import ConfigObj
 
 class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
     int_id_L =[1,2,3,4,5,6]
@@ -74,8 +75,8 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         baudrateList = ['9600','115200','1000000']
         self.ui.baudrate_comboBox.addItems(baudrateList)
 
-        postureList = ['unknown','p1','p2','p3','p4','p5','p6','p7','p8','p9','p10']
-        self.ui.posture_comboBox.addItems(postureList)
+        self.postureList = ['test','front_getup','back_getup','getup1','getup2','p1','p2','p3','p4','p5']
+        self.ui.posture_comboBox.addItems(self.postureList)
 
         self.keyframeList = [str(i) for i in range(1, 31)]
 
@@ -144,6 +145,82 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.ui.saveCenter_pushButton.clicked.connect(self.OnButton_SaveCenter)
 
         self.Search_Comport()
+
+        self.ui.saveFile_pushButton.clicked.connect(self.OnButton_saveFile)
+        self.ui.loadFile_pushButton.clicked.connect(self.OnButton_loadFile)
+
+    def OnButton_saveFile(self):
+        fname = QFileDialog.getSaveFileName(self, 'Save file', './Postures/', "OBJ (*.ini)")
+
+        print(fname)
+        print("save file")
+        if fname[0]:
+            config = ConfigObj()
+            config.filename = fname[0]
+            config['motors type'] = {}
+            config['motors type']['left leg'] = self.str_motorType[0:6]
+            config['motors type']['right leg'] = self.str_motorType[6:12]
+            config['motors type']['left arm'] = self.str_motorType[12:16]
+            config['motors type']['right arm'] = self.str_motorType[16:20]
+            config['motors type']['head'] = self.str_motorType[20:23]
+            config['motors center'] = {}
+            config['motors center']['left leg'] = self.int_motorCenterValue[0:6]
+            config['motors center']['right leg'] = self.int_motorCenterValue[6:12]
+            config['motors center']['left arm'] = self.int_motorCenterValue[12:16]
+            config['motors center']['right arm'] = self.int_motorCenterValue[16:20]
+            config['motors center']['head'] = self.int_motorCenterValue[20:23]
+
+            for posture in self.postureList:
+                config[posture] = {}
+                config[posture]['Keyframe_Amount'] = self.int_numberOfKeyframe
+                config[posture]['Keyframe_Time'] = self.int_time[:self.int_numberOfKeyframe]
+                config[posture]['Keyframe_Value'] = {}
+                for i in range(self.int_numberOfKeyframe):
+                    config[posture]['Keyframe_Value']['Keyframe_' + str(i)] = self.int_motorValue[i]
+            config.write()
+
+
+
+    def OnButton_loadFile(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open file', './Postures', "OBJ (*.ini)")
+
+        if fname[0]:
+            f = open(fname[0], 'r')
+
+            with f:
+                print("file name", fname[0])
+                config = ConfigObj(fname[0])
+
+                self.present_filename = fname[0].split("/")[len(fname[0].split("/")) - 1]
+                self.present_filepath = fname[0]
+                print("present file name =", self.present_filename)
+
+                self.ui.fileName_label.setText((fname[0].split("/")[len(fname[0].split("/")) - 1]))
+
+                self.int_numberOfKeyframe = int(config['Keyframe_Amount'])
+                self.ui.numOfKeyframeStatus_label.setText(str(self.int_numberOfKeyframe))
+                try:
+                    self.str_keyframe_gesture_type = config['Keyframe_Posture_Type']
+                    print("load keyframe type OK!!")
+                except:
+                    self.str_keyframe_gesture_type = []
+                    for i in range(self.int_numberOfKeyframe):
+                        if i == 0:
+                            self.str_keyframe_gesture_type.append('ready')
+                        else:
+                            self.str_keyframe_gesture_type.append('main')
+                    print("renew gesture type!!!")
+                print(self.str_keyframe_gesture_type)
+                for i in range(int(self.int_numberOfKeyframe)):
+                    self.bool_activeKeyframe[i] = True
+                    self.int_motorValue[i] = list(map(int, config['Keyframe_Value']['Keyframe_' + str(i)]))
+
+                    self.int_time[i] = int(config['Keyframe_Time'][i])
+
+                for i in range(int(self.int_numberOfKeyframe), 30):
+                    self.bool_activeKeyframe[i] = False
+
+                self.SetValueKeyframeToShow()
 
     def Search_Comport(self):
         ports = list(serial.tools.list_ports.comports())
