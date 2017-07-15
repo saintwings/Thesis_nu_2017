@@ -28,15 +28,18 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
 
     def InitVariable(self):
+
+        self.config_setup = ConfigObj("setup.ini")
+        self.str_fileName = self.config_setup['fileName']
+        self.str_baudrate = self.config_setup['baudrate']
+
         self.int_stepTime = 0.03
         self.str_keyframeSelected ='Keyframe1'
         self.int_keyframeSelected = 1
         self.bool_comportConnected = False
         self.int_numberOfKeyframe = 0
-        self.str_fileName = 'mx_default.ini'
-        self.str_postureName = 'test'
-        self.str_comport = 'com81'
-        self.str_baudrate = 1000000
+        self.str_postureName = 'center'
+        self.str_comport = None
         self.int_keyframe = 0
         self.int_motorID = 0
         self.bool_activeKeyframe =[False for x in range (self.int_keyframe_Amount)]
@@ -45,7 +48,9 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         config_default = ConfigObj(self.str_fileName)
         self.config_current = config_default
 
-        print(config_default['motors type'])
+
+
+
 
         self.str_motorType = config_default['motors type']['left leg'] + config_default['motors type']['right leg'] + \
                              config_default['motors type']['left arm'] + config_default['motors type']['right arm'] + \
@@ -73,14 +78,17 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
 
 
+
+
     def InitUI(self):
 
         self.SetMotorCenterLabel()
 
         baudrateList = ['9600','115200','1000000']
         self.ui.baudrate_comboBox.addItems(baudrateList)
+        self.ui.baudrate_comboBox.setCurrentIndex(baudrateList.index(self.str_baudrate))
 
-        self.postureList = ['test','front_getup','back_getup','getup1','getup2','p1','p2','p3','p4','p5']
+        self.postureList = ['center','front_getup','back_getup','getup1','getup2','p1','p2','p3','p4','p5']
         self.ui.posture_comboBox.addItems(self.postureList)
 
         self.keyframeList = [str(i) for i in range(1, 31)]
@@ -111,6 +119,11 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.ui.setLArmAll_pushButton.clicked.connect(self.OnButton_setLArmAll)
         self.ui.setRArmAll_pushButton.clicked.connect(self.OnButton_setRArmAll)
         self.ui.setHAll_pushButton.clicked.connect(self.OnButton_setHAll)
+
+        ### set text motor type ###
+        for id in self.int_id_All:
+            eval("self.ui.motorType{}_label".format(id)).setText(self.str_motorType[self.dic_motorIndexID['id'+str(id)]])
+
 
         for id in self.int_id_All:
             eval("self.ui.motor{}Set_pushButton".format(id)).clicked.connect(lambda ignore, id=id: self.OnButton_Set(id))
@@ -170,6 +183,11 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             self.config_current = config
 
             self.ui.fileName_label.setText((fname[0].split("/")[len(fname[0].split("/")) - 1]))
+            self.str_fileName = str(fname[0].split("/")[len(fname[0].split("/")) - 1])
+            self.ui.fileName_label.setText(self.str_fileName)
+
+            self.config_setup['fileName'] = self.str_fileName
+            self.config_setup.write()
 
             self.OnButton_Load()
 
@@ -189,10 +207,28 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                 config = ConfigObj(fname[0])
 
                 self.config_current = config
-
-                self.ui.fileName_label.setText((fname[0].split("/")[len(fname[0].split("/")) - 1]))
+                self.str_fileName = str(fname[0].split("/")[len(fname[0].split("/")) - 1])
+                self.ui.fileName_label.setText(self.str_fileName)
 
                 self.OnButton_Load()
+
+
+
+                self.str_motorType = self.config_current['motors type']['left leg'] + self.config_current['motors type'][
+                    'right leg'] + \
+                                     self.config_current['motors type']['left arm'] + self.config_current['motors type'][
+                                         'right arm'] + \
+                                     self.config_current['motors type']['head']
+
+                ### set text motor type ###
+                for id in self.int_id_All:
+                    eval("self.ui.motorType{}_label".format(id)).setText(
+                        self.str_motorType[self.dic_motorIndexID['id' + str(id)]])
+
+
+                self.config_setup['fileName'] = self.str_fileName
+                self.config_setup.write()
+
 
 
     def Search_Comport(self):
@@ -533,11 +569,11 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
 
         print("aaaaaaaaaaaaaaaaaaaaa")
-        config['motors type']['left leg'] = self.int_motorCenterValue[0:6]
-        config['motors type']['right leg'] = self.int_motorCenterValue[6:12]
-        config['motors type']['left arm'] = self.int_motorCenterValue[12:16]
-        config['motors type']['right arm'] = self.int_motorCenterValue[16:20]
-        config['motors type']['head'] = self.int_motorCenterValue[20:23]
+        config['motors center']['left leg'] = self.int_motorCenterValue[0:6]
+        config['motors center']['right leg'] = self.int_motorCenterValue[6:12]
+        config['motors center']['left arm'] = self.int_motorCenterValue[12:16]
+        config['motors center']['right arm'] = self.int_motorCenterValue[16:20]
+        config['motors center']['head'] = self.int_motorCenterValue[20:23]
 
         config.write()
 
@@ -568,10 +604,16 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
     def OnButton_connect(self):
         print("connect clicked")
         if self.bool_comportConnected == False:
-            self.bool_comportConnected = True
-            self.serialDevice = serial.Serial(self.str_comport, self.str_baudrate,8,'N',1,0,0,0,0)
-            self.ui.connectionStatus_label.setText("Status : Connected")
-            self.ui.connect_Button.setText("Disconnect")
+            try:
+
+                self.serialDevice = serial.Serial(self.str_comport, self.str_baudrate,8,'N',1,0,0,0,0)
+                self.bool_comportConnected = True
+                self.ui.connectionStatus_label.setText("Status : Connected")
+                self.ui.connect_Button.setText("Disconnect")
+                self.config_setup['baudrate'] = self.str_baudrate
+                self.config_setup.write()
+            except:
+                print("Cannot Connect Comport!!!")
         else:
             self.bool_comportConnected = False
             self.serialDevice.close()
