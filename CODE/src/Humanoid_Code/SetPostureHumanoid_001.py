@@ -49,17 +49,14 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.config_current = config_default
 
 
-
-
-
         self.str_motorType = config_default['motors type']['left leg'] + config_default['motors type']['right leg'] + \
                              config_default['motors type']['left arm'] + config_default['motors type']['right arm'] + \
                              config_default['motors type']['head']
-        print(self.str_motorType)
+        #print(self.str_motorType)
         self.int_motorCenterValue = config_default['motors center']['left leg'] + config_default['motors center'][
             'right leg'] + config_default['motors center']['left arm'] + config_default['motors center']['right arm'] + \
                                     config_default['motors center']['head']
-        print(self.int_motorCenterValue)
+        #print(self.int_motorCenterValue)
 
         self.int_motorCenterValue = [int(self.int_motorCenterValue[x]) for x in range (self.int_motor_Amount)]
 
@@ -166,8 +163,121 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
         self.ui.saveFile_pushButton.clicked.connect(self.OnButton_saveFile)
         self.ui.loadFile_pushButton.clicked.connect(self.OnButton_loadFile)
+        self.ui.generateGetupFile_pushButton.clicked.connect(self.OnButton_generateGetupFIle)
 
-        #self.OnButton_Load()
+
+    def OnButton_generateGetupFIle(self):
+        fileName = self.str_fileName
+        fileName = fileName.replace('.ini','.txt')
+        #print(self.str_fileName)
+        #print(fileName)
+        file = open(fileName,'w')
+        file.write('/////*** Motors Type Declaration ***/////\n')
+        file.write('char c_MotorLeftLeg_Type[c_MotorLeftLeg_Amount] = {')
+        last = len(self.config_current['motors type']['left leg']) - 1
+        for i, item in enumerate(self.config_current['motors type']['left leg']):
+            file.write("'" +str(item.replace('X','')) +"'")
+            if i == last:
+                file.write(' }; /// ID :: ' + str(self.int_id_L) + ' ///\n')
+                break
+            else: file.write((' ,'))
+        file.write('char c_MotorRightLeg_Type[c_MotorRightLeg_Amount] = {')
+        for i, item in enumerate(self.config_current['motors type']['right leg']):
+            file.write("'" +str(item.replace('X','')) +"'")
+            if i == last:
+                file.write(' }; /// ID :: ' + str(self.int_id_R) + ' ///\n')
+                break
+            else: file.write((' ,'))
+
+        last = len(self.config_current['motors type']['left arm']) - 2
+        file.write('char c_MotorLeftArm_Type[c_MotorLeftArm_Amount] = {')
+        for i, item in enumerate(self.config_current['motors type']['left arm']):
+            file.write("'" + str(item.replace('X', '')) + "'")
+            if i == last:
+                file.write(' }; /// ID :: ' + str(self.int_id_LArm[:-1]) + ' ///\n')
+                break
+            else:
+                file.write((' ,'))
+        file.write('char c_MotorRightArm_Type[c_MotorRightArm_Amount] = {')
+        for i, item in enumerate(self.config_current['motors type']['right arm']):
+            file.write("'" + str(item.replace('X', '')) + "'")
+            if i == last:
+                file.write(' }; /// ID :: ' + str(self.int_id_RArm[:-1]) + ' ///\n')
+                break
+            else:
+                file.write((' ,'))
+
+        file.write('\n\n/////*** Motors Center Value Declaration ***/////\n')
+        file.write('int i_MotorLeftLeg_Value_Center[c_MotorLeftLeg_Amount] = {')
+        last = len(self.config_current['motors center']['left leg']) - 1
+        for i, item in enumerate(self.config_current['motors center']['left leg']):
+            file.write(str(item.replace('X', '')))
+            if i == last:
+                file.write(' }; /// ID :: ' + str(self.int_id_L) + ' ///\n')
+                break
+            else:
+                file.write((' ,'))
+        file.write('int i_MotorRightLeg_Value_Center[c_MotorRightLeg_Amount] = {')
+        for i, item in enumerate(self.config_current['motors center']['right leg']):
+            file.write(str(item.replace('X', '')))
+            if i == last:
+                file.write(' }; /// ID :: ' + str(self.int_id_R) + ' ///\n')
+                break
+            else:
+                file.write((' ,'))
+
+        last = len(self.config_current['motors center']['left arm']) - 2
+        file.write('int i_MotorLeftArm_Value_Center[c_MotorLeftArm_Amount] = {')
+        for i, item in enumerate(self.config_current['motors center']['left arm']):
+            file.write(str(item.replace('X', '')))
+            if i == last:
+                file.write(' }; /// ID :: ' + str(self.int_id_LArm[:-1]) + ' ///\n')
+                break
+            else:
+                file.write((' ,'))
+        file.write('int i_MotorRightArm_Value_Center[c_MotorRightArm_Amount] = {')
+        for i, item in enumerate(self.config_current['motors center']['right arm']):
+            file.write(str(item.replace('X', '')))
+            if i == last:
+                file.write(' }; /// ID :: ' + str(self.int_id_RArm[:-1]) + ' ///\n')
+                break
+            else:
+                file.write((' ,'))
+
+        motor_valur_index = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18]
+        file.write('\n\n/////*** Getup ***/////\n')
+        file.write('const int i_Motion_Parameter_Amount = 19;\n')
+        file.write('const int i_Motion_Parameter_Time_Index = i_Motion_Parameter_Amount - 1;\n')
+        file.write('/////*** Front Getup ***/////\n')
+        file.write('const int i_Motion_FrontGetup_State_Amount = ' +str(self.config_current['front_getup']['Keyframe_Amount']) +';\n')
+        file.write('float f_Motion_FrontGetup_State_Parameter[i_Motion_FrontGetup_State_Amount][i_Motion_Parameter_Amount] = {\n')
+        for i in range(int(self.config_current['front_getup']['Keyframe_Amount'])):
+            file.write('{')
+            for j in motor_valur_index:
+                #print(self.config_current['front_getup']['Keyframe_Value']['Keyframe_' + str(i)][j])
+                file.write(str(self.config_current['front_getup']['Keyframe_Value']['Keyframe_' + str(i)][j] + ', '))
+
+            file.write('/*Time*/  ' + str(self.config_current['front_getup']['Keyframe_Time'][i]))
+            if(i == int(self.config_current['front_getup']['Keyframe_Amount']) -1): file.write('}\n};\n')
+            else: file.write('},\n')
+
+
+        file.write('/////*** Back Getup ***/////\n')
+        file.write('const int i_Motion_BackGetup_State_Amount = ' + str(self.config_current['back_getup']['Keyframe_Amount']) + ';\n')
+        file.write('float f_Motion_BackGetup_State_Parameter[i_Motion_BackGetup_State_Amount][i_Motion_Parameter_Amount] = {\n')
+        for i in range(int(self.config_current['back_getup']['Keyframe_Amount'])):
+            file.write('{')
+            for j in motor_valur_index:
+                #print(self.config_current['back_getup']['Keyframe_Value']['Keyframe_' + str(i)][j])
+                file.write(str(self.config_current['back_getup']['Keyframe_Value']['Keyframe_' + str(i)][j] + ', '))
+
+            file.write('/*Time*/  ' + str(self.config_current['back_getup']['Keyframe_Time'][i]))
+            if(i == int(self.config_current['back_getup']['Keyframe_Amount']) -1): file.write('}\n};\n')
+            else: file.write('},\n')
+
+
+        file.close()
+        print("Finished generate getup file " + str(fileName))
 
     def OnButton_saveFile(self):
         fname = QFileDialog.getSaveFileName(self, 'Save file', './Postures/', "OBJ (*.ini)")
@@ -190,8 +300,6 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             self.config_setup.write()
 
             self.OnButton_Load()
-
-
 
     def OnButton_loadFile(self):
 
@@ -515,8 +623,8 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             self.SetButtonAndSpinCtrlEnable()
 
     def OnButton_Load(self):
-        print("Load")
-        print(self.str_postureName)
+        print("Load Posture :: "+str(self.str_postureName))
+
 
         self.ui.postureName_label.setText(self.str_postureName)
 
@@ -538,8 +646,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         self.SetValueKeyframeToShow()
 
     def OnButton_Save(self):
-        print("Save")
-        print(self.str_postureName)
+        print("Save Posture :: " + str(self.str_postureName))
 
         self.ui.postureName_label.setText(self.str_postureName)
 
@@ -567,8 +674,6 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             self.int_motorCenterValue[eval("self.dic_motorIndexID['id{}']".format(id))] = eval(
                 "self.ui.motor{}Value_spinBox.value()".format(id))
 
-
-        print("aaaaaaaaaaaaaaaaaaaaa")
         config['motors center']['left leg'] = self.int_motorCenterValue[0:6]
         config['motors center']['right leg'] = self.int_motorCenterValue[6:12]
         config['motors center']['left arm'] = self.int_motorCenterValue[12:16]
@@ -577,28 +682,11 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
         config.write()
 
-        #
-        # for y in range (self.int_motor_Amount):
-        #         file_center.write(str(self.int_motorCenterValue[y])+'\n')
-        #
-        # file_center.close()
-
-
-
-        # file_center = open('motor_center.txt', 'w')
-        # for i in self.int_id_All:
-        #     self.int_motorCenterValue[self.dic_motorIndexID['id'+str(i)]] = getattr(self.ui,"motor"+str(i)+"Value_spinBox").value()
-        #     #self.int_motorCenterValue[self.dic_motorIndexID['id1']] = self.ui.motor1Value_spinBox.value()
-        #
-        # for y in range (self.int_motor_Amount):
-        #         file_center.write(str(self.int_motorCenterValue[y])+'\n')
-        #
-        # file_center.close()
-
         self.SetMotorCenterLabel()
 
     def OnSelect_ComboboxPosture(self,text):
         self.str_postureName = text
+        print('Posture Selected')
         print(self.str_postureName)
 
     def OnButton_connect(self):
@@ -612,6 +700,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
                 self.ui.connect_Button.setText("Disconnect")
                 self.config_setup['baudrate'] = self.str_baudrate
                 self.config_setup.write()
+                print('comport connected')
             except:
                 print("Cannot Connect Comport!!!")
         else:
@@ -619,19 +708,20 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             self.serialDevice.close()
             self.ui.connectionStatus_label.setText("Status : Disconnected")
             self.ui.connect_Button.setText("Connect")
+            print('comport disconnected')
 
     def OnSelect_ComboboxComport(self,text):
         self.str_comport = str(text)
-        print(self.str_comport)
+        print("comport = " + str(self.str_comport))
 
     def OnSelect_ComboboxBaudrate(self,text):
         self.str_baudrate = str(text)
-        print(self.str_baudrate)
+        print("baurate = " + str(self.str_baudrate))
 
     def OnSelect_ComboboxKeyframe(self,text):
         self.str_keyframeSelected = text
         self.int_keyframeSelected = int(text)
-        print(self.int_keyframeSelected)
+        print("keyframe selected = " + str(self.int_keyframeSelected))
         self.SetValueKeyframeToShow()
 
     def SetValueKeyframeToShow(self):
@@ -640,8 +730,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
         self.int_keyframeSelected = keyframe
 
-        print("keyframe selected = ")
-        print(self.int_keyframeSelected)
+        print("keyframe selected = " + str(self.int_keyframeSelected))
 
 
         if self.bool_activeKeyframe[keyframe-1] == True:
@@ -704,7 +793,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             print("Checked")
 
             self.CheckPreviousKeyframe(self.int_keyframeSelected)
-            print('aaaaaaaaaaa')
+
             self.int_numberOfKeyframe = self.int_keyframeSelected
 
 
@@ -897,7 +986,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             self.serialDevice.write(Packet)
         except:
             print("Serial Error!! [setDisableMotorTorque]")
-        print(Packet)
+        #print(Packet)
 
     def setDeviceMoving( self,Port, Baud, deviceID, deviceType, goalPos, goalSpeed, maxTorque):
 
@@ -928,10 +1017,8 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             print("Serial Error!! [setDeviceMoving]")
 
 
-        # print(syncWritePacket,"goalPos =",goalPos)
     def InterpolateMotorValue(self,finish_value,start_value,finish_time,start_time,current_time):
         motor_value = int((finish_value - start_value)*(current_time-start_time)/(finish_time - start_time)+start_value)
-        #print motor_value
         return motor_value
 
 if __name__ == "__main__":
