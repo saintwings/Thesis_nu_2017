@@ -10,10 +10,12 @@ from configobj import ConfigObj
 class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
     int_id_L =[1,2,3,4,5,6]
     int_id_R =[11,12,13,14,15,16]
-    int_id_LArm =[21,22,23,24]
-    int_id_RArm =[31,32,33,34]
+    int_id_LArm =[21,22,23]
+    int_id_RArm =[31,32,33]
     int_id_H =[41,42,43]
-    int_id_All = int_id_L + int_id_R + int_id_LArm + int_id_RArm + int_id_H
+    int_id_All = int_id_L + int_id_R + int_id_LArm + int_id_RArm
+    #int_id_All = int_id_L + int_id_R + int_id_LArm + int_id_RArm + int_id_H
+
     int_motor_Amount = 23
     int_keyframe_Amount = 30
     int_time_Initial = 20
