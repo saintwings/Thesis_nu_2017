@@ -32,6 +32,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
     def InitVariable(self):
 
         self.config_setup = ConfigObj("setup.ini")
+        print(self.config_setup)
         self.str_fileName = self.config_setup['fileName']
         self.str_baudrate = self.config_setup['baudrate']
 
