@@ -793,34 +793,48 @@ class NamoMainWindow(QtWidgets.QMainWindow,Ui_Form):
 
     def getMotorQueryResponse( self, deviceID, Length ):
 
-            queryData = 0
-            responsePacketSize = Length + 6
-            responsePacket = self.serialDevice.read(self.serialDevice.inWaiting())
+        queryData = 0
+        responsePacketSize = Length + 6
+        # responsePacket = readAllData(serialDevice)
+        responsePacket = self.serialDevice.read(self.serialDevice.inWaiting())
 
-            if len(responsePacket) == responsePacketSize:
+        if len(responsePacket) == responsePacketSize:
 
-                    print("responsePacket=",responsePacket)
+            print("responsePacket=", responsePacket)
 
-                    responseID = responsePacket[2]
-                    errorByte = responsePacket[4]
+            responseID = responsePacket[2]
+            errorByte = responsePacket[4]
 
-                    ### python 3
-                    if responseID == deviceID and errorByte == 0:
-                        if Length == 2:
-                            queryData = responsePacket[5] + 256 * responsePacket[6]
-                        elif Length == 1:
-                            queryData = responsePacket[5]
-                            # print "Return data:", queryData
-                    else:
-                            print("Error response:", responseID, errorByte)
-            print("queryData=", queryData)
-            return queryData
+            ### python 3
+            if responseID == deviceID and errorByte == 0:
+                if Length == 2:
+                    queryData = responsePacket[5] + 256 * responsePacket[6]
+                elif Length == 1:
+                    queryData = responsePacket[5]
+                    # print "Return data:", queryData
+            else:
+                print("Error response:", responseID, errorByte)
+
+            responsePacketStatue = True
+
+        else:
+            responsePacketStatue = False
+
+        print("queryData=", queryData)
+        return queryData, responsePacketStatue
 
     def get(self,deviceID, address, Length):
 
-            self.setReadMotorPacket(deviceID, address, Length)
-            time.sleep(0.02)
-            data = self.getMotorQueryResponse(deviceID, Length)
+            for i in range(0,5):
+                self.setReadMotorPacket(deviceID, address, Length)
+                time.sleep(0.02)
+                data, status = self.getMotorQueryResponse(deviceID, Length)
+
+                if status == True:
+                    break
+                else:
+                    print("motor ID " + str(deviceID) + "  no response " + str(i))
+
             return data
 
     def getMotorPosition(self,id):
