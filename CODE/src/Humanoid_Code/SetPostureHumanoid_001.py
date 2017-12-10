@@ -628,7 +628,6 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
     def OnButton_Load(self):
         print("Load Posture :: "+str(self.str_postureName))
 
-
         self.ui.postureName_label.setText(self.str_postureName)
 
         self.int_numberOfKeyframe = int(self.config_current[self.str_postureName]['Keyframe_Amount'])
@@ -637,6 +636,7 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
         for x in range(self.int_numberOfKeyframe):
             self.bool_activeKeyframe[x] = True
             for y in range(self.int_motor_Amount):
+                print(self.str_postureName)
                 self.int_motorValue[x][y] = int(self.config_current[self.str_postureName]['Keyframe_Value']['Keyframe_' +str(x)][y])
             print(self.int_motorValue[x])
 
@@ -663,6 +663,9 @@ class HumanoidMainWindow(QtWidgets.QMainWindow,Ui_Form):
             config[self.str_postureName]['Keyframe_Value']['Keyframe_' + str(i)] = self.int_motorValue[i]
 
         config.write()
+
+        self.config_current = ConfigObj(self.str_fileName)
+
 
     def SetMotorCenterLabel(self):
         for i in self.int_id_All:
