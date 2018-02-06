@@ -126,3 +126,73 @@ def cal_Single_Posture_Score(T_matrix_ref, Q_ref, T_matrix, Q, score_weight):
     score.append(sum_diff)
 
     return score
+
+def extract_arm_data(posture_dataSet, armSide):
+    if armSide == 'right':
+        index_range = [7, 14]
+    elif armSide == 'left':
+        index_range = [0, 7]
+    else:
+        index_range = [14, 17]
+    data_set = np.asarray(posture_dataSet)
+
+    new_data_set = data_set[:, index_range[0]:index_range[1]]
+
+    return new_data_set
+
+def calculate_stat_all_joint(posture_dataSet):
+    mean = np.mean(posture_dataSet, axis=0)
+    std = np.std(posture_dataSet, axis=0)
+    var = np.var(posture_dataSet, axis=0)
+
+    return [mean, std, var]
+
+
+def find_avg_joint_angle(all_posture_stat_list, weight_type):
+    posture_amount = len(all_posture_stat_list)
+    joint_amount = len(all_posture_stat_list[0][0])
+
+    all_posture_mean = []
+
+    for i in range(posture_amount):
+        all_posture_mean.append(all_posture_stat_list[i][0])
+
+    # print("all_posture_mean=",all_posture_mean)
+
+    if weight_type == 'std':
+        all_joint_std = []
+        all_joint_std_inv = []
+        all_joint_weight = []
+
+        for joint_num in range(joint_amount):
+            joint_std = []
+            joint_std_inv = []
+
+            # print("joint_num=",joint_num)
+            for posture_num in range(posture_amount):
+                joint_std.append(all_posture_stat_list[posture_num][1][joint_num])
+                joint_std_inv.append(1 / all_posture_stat_list[posture_num][1][joint_num])
+
+            all_joint_std.append(joint_std)
+
+            all_joint_std_inv.append(joint_std_inv)
+            all_joint_weight.append([float(i) / sum(joint_std_inv) for i in joint_std_inv])
+
+        # print("all_joint_std=",all_joint_std)
+        # print("all_joint_std_inv=", all_joint_std_inv)
+        # print("all_joint_weight=", all_joint_weight)
+        #
+        # print("transpose_mean", np.transpose(all_posture_mean))
+
+        all_posture_mean_T = np.transpose(all_posture_mean)
+
+        joint_avg = []
+        for joint_num in range(joint_amount):
+            joint_avg.append(
+                float(round(np.average(all_posture_mean_T[joint_num], weights=all_joint_weight[joint_num]), 1)))
+
+    elif weight_type == 'equl':
+        # print("all_posture_mean=", all_posture_mean)
+        joint_avg = np.round(np.mean(all_posture_mean, axis=0), 2)
+
+    return joint_avg

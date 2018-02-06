@@ -111,17 +111,47 @@ def convert_motorValue_to_cartesianSpace(posture_dataSet):
     return motorDegree_set
 
 
+
+
 ##################################################################################################
 if __name__ == "__main__":
 
-    base_score_3dim = create_3dim_normalize_score_array(20) ### @param(sphere_radius)
-    print(base_score_3dim.shape)
+    #base_score_3dim = create_3dim_normalize_score_array(20) ### @param(sphere_radius)
+    #print(base_score_3dim.shape)
 
-    base_score_4dim = create_4dim_normalize_score_array(5)
-    print(base_score_4dim.shape)
+    #base_score_4dim = create_4dim_normalize_score_array(5)
+    #print(base_score_4dim.shape)
+    #print(base_score_4dim[3][3][3][3])
 
      ### load data ###
     jointAngle_degree_bye_set = collect_data('bye') ### @param(postureName)
     jointAngle_degree_salute_set = collect_data('salute')  ### @param(postureName)
     jointAngle_degree_sinvite_set = collect_data('side_invite')  ### @param(postureName)
     jointAngle_degree_wai_set = collect_data('wai')  ### @param(postureName)
+
+    ### extract right arm data ###
+    right_side_bye_set = extract_arm_data( jointAngle_degree_bye_set,'right')
+    right_side_salute_set = extract_arm_data(jointAngle_degree_salute_set, 'right')
+    right_side_sinvite_set = extract_arm_data(jointAngle_degree_sinvite_set, 'right')
+    right_side_wai_set = extract_arm_data(jointAngle_degree_wai_set, 'right')
+
+    ### calculate each posture stat ###
+    right_side_bye_stat = calculate_stat_all_joint(right_side_bye_set)
+    right_side_salute_stat = calculate_stat_all_joint(right_side_salute_set)
+    right_side_sinvite_stat = calculate_stat_all_joint(right_side_sinvite_set)
+    right_side_wai_stat = calculate_stat_all_joint(right_side_wai_set)
+
+    ### calculate average join angle from all posture ###
+    all_posture_stat_list = [right_side_bye_stat, right_side_salute_stat, right_side_sinvite_stat, right_side_wai_stat]
+    ### type :: 'std' = standard_deviation, 'equl' = all weight equal
+    avg_joint_angle_std = find_avg_joint_angle(all_posture_stat_list, 'std')
+    avg_joint_angle_equl = find_avg_joint_angle(all_posture_stat_list, 'equl')
+
+    ### calculate kinematics ###
+    bye_kinematics_set = collect_kinematics_data(right_side_bye_set)
+    salute_kinematics_set = collect_kinematics_data(right_side_salute_set)
+    sinvite_kinematics_set = collect_kinematics_data(right_side_sinvite_set)
+    wai_kinematics_set = collect_kinematics_data(right_side_wai_set)
+
+    print(bye_kinematics_set[0][0])
+    #print(avg_joint_angle_equl)
